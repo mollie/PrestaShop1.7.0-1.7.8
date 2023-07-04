@@ -489,7 +489,7 @@ class PaymentMethodService
      */
     public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard)
     {
-        $isSingleClickPaymentEnabled = (bool) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
             return null;
         }
