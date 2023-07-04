@@ -111,6 +111,7 @@ services:
       - '@Mollie\Service\LanguageService'
       - '@Mollie\Service\VoucherService'
       - '@Mollie\Adapter\ToolsAdapter'
+      - '@mollie.adapter.context'
 
   Mollie\Service\CustomerService:
     class: Mollie\Service\CustomerService
