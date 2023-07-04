@@ -12,7 +12,6 @@
 
 namespace Mollie\Install;
 
-use Configuration;
 use Db;
 use DbQuery;
 use Exception;
@@ -433,15 +432,11 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, $this->configurationAdapter->get(Config::MOLLIE_STATUS_AWAITING));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, $this->configurationAdapter->get('PS_OS_PAYMENT'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, $this->configurationAdapter->get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(
-            Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            $this->configurationAdapter->get(Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND))
-        );
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, $this->configurationAdapter->get('PS_OS_CANCELED'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, $this->configurationAdapter->get('PS_OS_CANCELED'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, $this->configurationAdapter->get('PS_OS_REFUND'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_SHIPPING, $this->configurationAdapter->get(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_PAID, true);
@@ -528,7 +523,7 @@ class Installer implements InstallerInterface
 
     public function installVoucherFeatures()
     {
-        $mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
+        $mollieVoucherId = $this->configurationAdapter->get(Config::MOLLIE_VOUCHER_FEATURE_ID);
         if ($mollieVoucherId) {
             $mollieFeature = new Feature((int) $mollieVoucherId);
             $doesFeatureExist = Validate::isLoadedObject($mollieFeature);
