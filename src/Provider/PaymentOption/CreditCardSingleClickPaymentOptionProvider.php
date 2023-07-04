@@ -36,7 +36,6 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use Configuration;
 use Customer;
 use MolCustomer;
 use Mollie;

@@ -76,7 +76,7 @@ class ConfigurationAdapter
     public function delete($key)
     {
         if (is_array($key)) {
-            if ((int)$this->get(Config::MOLLIE_ENVIRONMENT)) {
+            if ((int) $this->get(Config::MOLLIE_ENVIRONMENT)) {
                 $key = $key['production'];
             } else {
                 $key = $key['sandbox'];
