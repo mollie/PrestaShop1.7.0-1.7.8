@@ -17,7 +17,7 @@ use Mollie\Service\ApiServiceInterface;
 
 class ApiServiceMock implements ApiServiceInterface
 {
-    public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string
+    public function requestApplePayPaymentSession($api, string $validationUrl): string
     {
         return json_encode([
             'epochTimestamp' => 1649750949380,
