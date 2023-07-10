@@ -12,7 +12,6 @@
 
 namespace Mollie\Tests\Mocks\Service;
 
-use Mollie\Api\MollieApiClient;
 use Mollie\Service\ApiServiceInterface;
 
 class ApiServiceMock implements ApiServiceInterface

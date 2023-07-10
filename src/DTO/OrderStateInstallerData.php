@@ -25,8 +25,7 @@ class OrderStateInstallerData
     /** @var bool */
     private $pdfInvoice;
 
-    public function __construct
-    (
+    public function __construct(
         string $name,
         string $color,
         bool $sendEmail = false,

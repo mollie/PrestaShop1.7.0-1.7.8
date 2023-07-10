@@ -34,7 +34,7 @@ class OrderStateInstallerTest extends BaseTestCase
             'shipped' => $shipped,
             'paid' => $paid,
             'pdf_invoice' => $pdfInvoice,
-            'module_name' => 'mollie'
+            'module_name' => 'mollie',
         ]);
     }
 
