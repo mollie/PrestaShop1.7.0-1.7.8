@@ -2,7 +2,7 @@
 
 namespace Mollie\DTO;
 
-class OrderStateInstallerData
+class OrderStateData
 {
     /** @var string */
     private $name;

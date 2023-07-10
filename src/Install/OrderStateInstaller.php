@@ -4,7 +4,7 @@ namespace Mollie\Install;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\DTO\OrderStateInstallerData;
+use Mollie\DTO\OrderStateData;
 use Mollie\Enum\EmailTemplate;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
@@ -37,7 +37,7 @@ class OrderStateInstaller implements InstallerInterface
     {
         $this->installOrderState(
             Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Partially refunded by Mollie',
                 '#6F8C9F'
             )
@@ -45,7 +45,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_AWAITING,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Awaiting Mollie payment',
                 '#4169E1'
             )
@@ -53,7 +53,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_PARTIALLY_SHIPPED,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Partially shipped',
                 '#8A2BE2'
             )
@@ -61,7 +61,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_ORDER_COMPLETED,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Completed',
                 '#3d7d1c',
                 true
@@ -70,7 +70,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Klarna payment authorized',
                 '#8A2BE2',
                 true,
@@ -86,7 +86,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_KLARNA_SHIPPED,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Klarna payment shipped',
                 '#8A2BE2',
                 true,
@@ -102,7 +102,7 @@ class OrderStateInstaller implements InstallerInterface
 
         $this->installOrderState(
             Config::MOLLIE_STATUS_CHARGEBACK,
-            new OrderStateInstallerData(
+            new OrderStateData(
                 'Mollie Chargeback',
                 '#E74C3C'
             )
@@ -114,7 +114,7 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    private function installOrderState(string $orderStatus, OrderStateInstallerData $orderStateInstallerData)
+    private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData)
     {
         if ($this->validateIfStatusExists($orderStatus)) {
             $this->enableState($orderStatus);
@@ -152,7 +152,7 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    private function createOrderState(OrderStateInstallerData $orderStateInstallerData): OrderState
+    private function createOrderState(OrderStateData $orderStateInstallerData): OrderState
     {
         $orderState = new OrderState();
 
