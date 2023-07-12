@@ -13,10 +13,11 @@
 namespace Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\LegacyContext;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
-use Mollie\Repository\AttributeRepository;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\CartLinesService;
 use Mollie\Service\LanguageService;
 use Mollie\Service\VoucherService;
@@ -55,27 +56,29 @@ class CartLinesServiceTest extends TestCase
         $mocks,
         $result
     ) {
-        /** @var MockObject $configurationAdapter */
         $configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)->getMock();
+
         foreach ($mocks as $mock) {
             $configurationAdapter->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
 
-        /** @var MockObject $languageService */
         $languageService = $this->getMockBuilder(LanguageService::class)->disableOriginalConstructor()->getMock();
+
         foreach ($translationMocks as $mock) {
             $languageService->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
 
-        /** @var ToolsAdapter $toolsAdapter */
         $toolsAdapter = $this->getMockBuilder(ToolsAdapter::class)->getMock();
+
         foreach ($toolsMocks as $mock) {
             $toolsAdapter->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
 
-        $voucherService = new VoucherService(new AttributeRepository(), $configurationAdapter);
+        $voucherService = $this->getMockBuilder(VoucherService::class)->disableOriginalConstructor()->getMock();
+        $context = $this->getMockBuilder(LegacyContext::class)->getMock();
 
-        $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter);
+        $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter, $context);
+
         $cartLines = $cartLineService->getCartLines(
             $amount,
             $paymentFee,
@@ -102,7 +105,7 @@ class CartLinesServiceTest extends TestCase
         return [
             'two products with a gift which is the same as one product' => [
                 'amount' => 204.84,
-                'paymentFee' => false,
+                'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
                 'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
                     'gift_products' => [
@@ -135,6 +138,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                     1 => [
                             'total_wt' => 100,
@@ -146,6 +151,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                 ],
                 'psGiftWrapping' => '1',
@@ -212,7 +219,7 @@ class CartLinesServiceTest extends TestCase
             ],
             'one products with a gift' => [
                 'amount' => 104.84,
-                'paymentFee' => false,
+                new PaymentFeeData(0.00, 0.00, 0.00, false),
                 'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
                     'gift_products' => [
@@ -245,6 +252,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                     1 => [
                             'total_wt' => 100,
@@ -256,6 +265,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                 ],
                 'psGiftWrapping' => '1',
@@ -312,7 +323,7 @@ class CartLinesServiceTest extends TestCase
             ],
             'product without name' => [
                 'amount' => 104.84,
-                'paymentFee' => false,
+                'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
                 'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
                     'gift_products' => [
@@ -345,6 +356,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                 ],
                 'psGiftWrapping' => '1',
@@ -391,7 +404,7 @@ class CartLinesServiceTest extends TestCase
             ],
             'Cart with discount' => [
                 'amount' => 98.79,
-                'paymentFee' => false,
+                'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
                 'currencyIsoCode' => $currencyIsoCode,
                 'cartSummary' => [
                     'gift_products' => [
@@ -420,6 +433,8 @@ class CartLinesServiceTest extends TestCase
                             'id_product_attribute' => '9',
                             'id_customization' => null,
                             'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
                         ],
                 ],
                 'psGiftWrapping' => '1',
