@@ -38,7 +38,6 @@ namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
 use Context;
-use Product;
 
 class LegacyContext
 {
