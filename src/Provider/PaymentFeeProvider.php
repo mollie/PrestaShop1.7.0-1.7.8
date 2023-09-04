@@ -37,7 +37,7 @@
 namespace Mollie\Provider;
 
 use Address;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
@@ -48,7 +48,7 @@ use MolPaymentMethod;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
     /** @var AddressRepositoryInterface */
     private $addressRepository;
@@ -56,7 +56,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     private $taxProvider;
 
     public function __construct(
-        LegacyContext $context,
+        Context $context,
         AddressRepositoryInterface $addressRepository,
         TaxCalculatorProvider $taxProvider
     ) {

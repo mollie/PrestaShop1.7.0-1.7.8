@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 5.4.3 ##
++ Migrated dependency injection service from Symfony to League container.
++ Overall improvements and bug fixes.
+
 ## Changes in release 5.4.2 ##
 + Decoupled Apple Pay direct feature flag into product and cart separate settings.
 + Overall improvements and bug fixes.

@@ -12,27 +12,24 @@
 
 namespace Mollie\Validator;
 
-use Context;
-use Customer;
 use Mollie;
+use Mollie\Adapter\Context;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\SecureKeyUtility;
 
 class OrderCallBackValidator
 {
     /**
-     * @var Customer
-     */
-    private $customer;
-
-    /**
      * @var Mollie
      */
     private $module;
+    /** @var Context */
+    private $context;
 
-    public function __construct(Context $context, Mollie $module)
+    public function __construct(Context $context, ModuleFactory $moduleFactory)
     {
-        $this->customer = $context->customer;
-        $this->module = $module;
+        $this->context = $context;
+        $this->module = $moduleFactory->getModule();
     }
 
     public function validate($key, $cartId)
@@ -51,7 +48,7 @@ class OrderCallBackValidator
     public function isSignatureMatches($key, $cartId)
     {
         return $key === SecureKeyUtility::generateReturnKey(
-                $this->customer->id,
+                $this->context->getCustomerId(),
                 $cartId,
                 $this->module->name
             );

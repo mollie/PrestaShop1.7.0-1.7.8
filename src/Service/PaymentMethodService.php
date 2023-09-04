@@ -21,7 +21,7 @@ use Customer;
 use Gender;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
@@ -30,6 +30,7 @@ use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -45,7 +46,6 @@ use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
 
 class PaymentMethodService
@@ -89,23 +89,19 @@ class PaymentMethodService
      */
     private $paymentMethodRestrictionValidation;
 
-    /**
-     * @var Shop
-     */
-    private $shop;
     /** @var GenderRepositoryInterface */
     private $genderRepository;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         PaymentMethodRepositoryInterface $methodRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
@@ -114,14 +110,13 @@ class PaymentMethodService
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Shop $shop,
         GenderRepositoryInterface $genderRepository,
         ConfigurationAdapter $configurationAdapter,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        LegacyContext $context,
+        Context $context,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->methodRepository = $methodRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
@@ -130,7 +125,6 @@ class PaymentMethodService
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->phoneNumberProvider = $phoneNumberProvider;
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
-        $this->shop = $shop;
         $this->genderRepository = $genderRepository;
         $this->configurationAdapter = $configurationAdapter;
         $this->paymentFeeProvider = $paymentFeeProvider;
@@ -196,7 +190,7 @@ class PaymentMethodService
             return [];
         }
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->id) ?: [];
+        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->context->getShopId()) ?: [];
 
         try {
             $mollieMethods = $this->getSupportedMollieMethods();

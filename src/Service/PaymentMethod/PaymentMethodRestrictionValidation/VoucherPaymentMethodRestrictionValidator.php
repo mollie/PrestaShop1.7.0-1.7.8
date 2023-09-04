@@ -36,7 +36,7 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Validator\VoucherValidator;
 use MolPaymentMethod;
@@ -44,7 +44,7 @@ use MolPaymentMethod;
 class VoucherPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
@@ -53,7 +53,7 @@ class VoucherPaymentMethodRestrictionValidator implements PaymentMethodRestricti
      */
     private $voucherValidator;
 
-    public function __construct(LegacyContext $context, VoucherValidator $voucherValidator)
+    public function __construct(Context $context, VoucherValidator $voucherValidator)
     {
         $this->context = $context;
         $this->voucherValidator = $voucherValidator;

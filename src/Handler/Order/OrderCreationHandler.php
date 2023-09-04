@@ -46,6 +46,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
@@ -78,14 +79,14 @@ class OrderCreationHandler
     private $paymentFeeProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderPaymentFeeHandler $orderPaymentFeeHandler,
         OrderStatusService $orderStatusService,
         PaymentFeeProviderInterface $paymentFeeProvider
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
@@ -189,7 +190,7 @@ class OrderCreationHandler
     public function createBankTransferOrder($paymentData, Cart $cart)
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
             (int) $cart->id,
             (int) Configuration::get(Config::MOLLIE_STATUS_OPEN),

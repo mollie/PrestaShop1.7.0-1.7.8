@@ -14,6 +14,7 @@ namespace Mollie\Provider;
 
 use Context;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use SimpleXMLElement;
 use Tools;
 
@@ -26,9 +27,9 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

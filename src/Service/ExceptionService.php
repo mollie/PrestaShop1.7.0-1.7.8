@@ -15,6 +15,7 @@ use Exception;
 use Mollie;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\ShipmentCannotBeSentException;
+use Mollie\Factory\ModuleFactory;
 
 class ExceptionService
 {
@@ -25,9 +26,9 @@ class ExceptionService
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     public function getErrorMessages()

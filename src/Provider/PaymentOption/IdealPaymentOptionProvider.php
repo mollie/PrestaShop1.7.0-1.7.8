@@ -37,7 +37,7 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Mollie;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
@@ -58,7 +58,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     private $module;
 
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
@@ -91,7 +91,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 
     public function __construct(
         Mollie $module,
-        LegacyContext $context,
+        Context $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,

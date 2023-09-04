@@ -15,6 +15,7 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\LanguageService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
@@ -25,12 +26,6 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
-/**
- * Class MolliePaymentModuleFrontController.
- *
- * @property Context $context
- * @property Mollie $module
- */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
     const FILE_NAME = 'payment';
@@ -43,6 +38,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
     /** @var bool */
     public $display_column_right = false;
+
+    /** @var \Mollie */
+    public $module;
 
     /**
      * @throws PrestaShopDatabaseException
@@ -60,8 +58,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $cart,
             $customer
         )) {
-            /** @var Mollie\Service\LanguageService $langService */
-            $langService = $this->module->getMollieContainer(Mollie\Service\LanguageService::class);
+            /** @var LanguageService $langService */
+            $langService = $this->module->getService(LanguageService::class);
             $this->errors[] = $langService->lang('This payment method is not available.');
             $this->setTemplate('error.tpl');
 
@@ -81,13 +79,13 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
         /** @var PaymentMethodService $transactionService */
-        $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
+        $transactionService = $this->module->getService(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
-        $mollieOrderCreationService = $this->module->getMollieContainer(MollieOrderCreationService::class);
+        $mollieOrderCreationService = $this->module->getService(MollieOrderCreationService::class);
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -111,7 +109,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         if ($method === PaymentMethod::BANKTRANSFER) {
             /** @var OrderCreationHandler $orderCreationHandler */
-            $orderCreationHandler = $this->module->getMollieContainer(OrderCreationHandler::class);
+            $orderCreationHandler = $this->module->getService(OrderCreationHandler::class);
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
         }
 
@@ -124,7 +122,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
             } else {
                 /** @var ExceptionService $exceptionService */
-                $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
+                $exceptionService = $this->module->getService(ExceptionService::class);
                 $message = $exceptionService->getErrorMessageForException($e);
             }
             $this->errors[] = $message;

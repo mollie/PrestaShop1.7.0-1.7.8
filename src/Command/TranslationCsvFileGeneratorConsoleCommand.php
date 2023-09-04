@@ -13,6 +13,7 @@
 namespace Mollie\Command;
 
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,10 +25,11 @@ class TranslationCsvFileGeneratorConsoleCommand extends Command
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
         parent::__construct();
-        $this->module = $module;
+
+        $this->module = $moduleFactory->getModule();
     }
 
     protected function configure()

@@ -1,6 +1,6 @@
 <?php
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
@@ -13,7 +13,7 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
     public function testIsValid($isApple, $configurationAdapter, $expectedResult)
     {
         $_COOKIE['isApplePayMethod'] = $isApple;
-        $contextMock = $this->getMockBuilder(LegacyContext::class)
+        $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(

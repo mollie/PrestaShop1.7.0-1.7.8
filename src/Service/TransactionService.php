@@ -27,6 +27,7 @@ use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Exception\TransactionException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderPaymentFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
@@ -80,7 +81,7 @@ class TransactionService
     private $exceptionService;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         OrderStatusService $orderStatusService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderCreationHandler $orderCreationHandler,
@@ -91,7 +92,7 @@ class TransactionService
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->orderStatusService = $orderStatusService;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderCreationHandler = $orderCreationHandler;

@@ -14,6 +14,7 @@ namespace Mollie\Service;
 
 use Exception;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Order;
 use PrestaShopLogger;
@@ -50,7 +51,7 @@ class MollieOrderInfoService
     private $apiService;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         RefundService $refundService,
         ShipService $shipService,
@@ -58,7 +59,7 @@ class MollieOrderInfoService
         ShipmentServiceInterface $shipmentService,
         ApiService $apiService
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->refundService = $refundService;
         $this->shipService = $shipService;

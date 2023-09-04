@@ -24,6 +24,7 @@ use Hook;
 use Language;
 use Mail;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Order;
 use OrderState;
 use PDF;
@@ -45,9 +46,9 @@ class MailService
      */
     private $context;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->context = Context::getContext();
     }
 

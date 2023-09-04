@@ -36,7 +36,7 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 use MolPaymentMethod;
@@ -45,7 +45,7 @@ use MolPaymentMethod;
 class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
@@ -60,7 +60,7 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     private $methodCountryRepository;
 
     public function __construct(
-        LegacyContext $context,
+        Context $context,
         EnvironmentVersionProviderInterface $prestashopVersionProvider,
         MethodCountryRepository $methodCountryRepository
     ) {

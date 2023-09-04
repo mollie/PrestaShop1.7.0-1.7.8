@@ -15,7 +15,7 @@ namespace Mollie\Tests\Unit\Tools;
 use Cart;
 use Currency;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Resources\Method;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use MolPaymentMethod;
@@ -42,7 +42,7 @@ class UnitTestCase extends TestCase
 
     public function mockContext($countryCode, $currencyCode)
     {
-        $contextMock = $this->getMockBuilder(LegacyContext::class)
+        $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -76,7 +76,7 @@ class UnitTestCase extends TestCase
 
     public function mockContextWithCookie($cookieValue)
     {
-        $contextMock = $this->getMockBuilder(LegacyContext::class)
+        $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
 

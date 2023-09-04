@@ -37,16 +37,16 @@
 namespace Mollie\Provider\OrderTotal;
 
 use Exception;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 
 class OrderTotalProvider implements OrderTotalProviderInterface
 {
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
-    public function __construct(LegacyContext $context)
+    public function __construct(Context $context)
     {
         $this->context = $context;
     }
