@@ -22,6 +22,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
 use MolPaymentMethod;
@@ -38,10 +39,10 @@ class MollieOrderCreationService
      */
     private $module;
 
-    public function __construct(OrderExceptionHandler $exceptionHandler, Mollie $module)
+    public function __construct(OrderExceptionHandler $exceptionHandler, ModuleFactory $moduleFactory)
     {
         $this->exceptionHandler = $exceptionHandler;
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

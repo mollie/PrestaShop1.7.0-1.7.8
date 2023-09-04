@@ -37,13 +37,13 @@
 namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
-use Context;
+use Context as PrestaShopContext;
 
-class LegacyContext
+class Context
 {
     public function getContext()
     {
-        return Context::getContext();
+        return PrestaShopContext::getContext();
     }
 
     public function getCookieValue($key)
@@ -173,5 +173,60 @@ class LegacyContext
     public function getCurrencyIso(): string
     {
         return (string) $this->getContext()->currency->iso_code;
+    }
+
+    public function getAdminLink(string $controller): string
+    {
+        return (string) $this->getContext()->link->getAdminLink($controller);
+    }
+
+    public function getLanguageId(): int
+    {
+        return (int) $this->getContext()->language->id;
+    }
+
+    public function getPageLink(string $controller, bool $ssl = null, int $idLang = null, $request = null): string
+    {
+        return (int) $this->getContext()->link->getPageLink($controller, $ssl, $idLang, $request);
+    }
+
+    public function getLanguageIso(): string
+    {
+        return (string) $this->getContext()->language->iso_code;
+    }
+
+    public function getShopContext(): int
+    {
+        return (int) $this->getContext()->shop->getContextType();
+    }
+
+    public function getShops(bool $active = true, int $id_shop_group = null, bool $get_as_list_id = false): array
+    {
+        return $this->getContext()->shop::getShops($active, $id_shop_group, $get_as_list_id);
+    }
+
+    public function getContextShopGroupID(): int
+    {
+        return (int) $this->getContext()->shop->getContextualShopId();
+    }
+
+    public function getShopDomain(): string
+    {
+        return (string) $this->getContext()->shop->domain;
+    }
+
+    public function getCustomerId(): int
+    {
+        return (int) ($this->getContext()->customer->id ?? 0);
+    }
+
+    public function getCustomerEmail(): string
+    {
+        return (string) ($this->getContext()->customer->email ?? '');
+    }
+
+    public function isCustomerGuest(): bool
+    {
+        return (string) ($this->getContext()->customer->isGuest() ?? '');
     }
 }

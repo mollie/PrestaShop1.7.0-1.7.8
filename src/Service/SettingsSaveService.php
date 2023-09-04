@@ -14,25 +14,25 @@ namespace Mollie\Service;
 
 use Carrier;
 use Configuration;
-use Context;
 use Exception;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\TagsUtility;
 use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
 
 class SettingsSaveService
@@ -50,7 +50,7 @@ class SettingsSaveService
     private $countryRepository;
 
     /**
-     * @var PaymentMethodRepository
+     * @var PaymentMethodRepositoryInterface
      */
     private $paymentMethodRepository;
 
@@ -84,25 +84,25 @@ class SettingsSaveService
      */
     private $applePayDirectCertificateHandler;
 
-    /** @var Shop */
-    private $shop;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var Context */
+    private $context;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         CountryRepository $countryRepository,
-        PaymentMethodRepository $paymentMethodRepository,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         ApiService $apiService,
         MolCarrierInformationService $carrierInformationService,
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
         ApiKeyService $apiKeyService,
         CertificateHandlerInterface $applePayDirectCertificateHandler,
-        Shop $shop,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        Context $context
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->countryRepository = $countryRepository;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
@@ -111,8 +111,8 @@ class SettingsSaveService
         $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
         $this->apiService = $apiService;
         $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
-        $this->shop = $shop;
         $this->configurationAdapter = $configurationAdapter;
+        $this->context = $context;
     }
 
     /**
@@ -203,7 +203,7 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, $this->context->getShopId());
         }
 
         if ($paymentOptionPositions) {
@@ -321,7 +321,7 @@ class SettingsSaveService
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
             );
             $carriers = Carrier::getCarriers(
-                Context::getContext()->language->id,
+                $this->context->getLanguageId(),
                 false,
                 false,
                 false,
@@ -374,8 +374,8 @@ class SettingsSaveService
     private function getStatusesValue($key)
     {
         $statesEnabled = [];
-        $context = Context::getContext();
-        foreach (OrderState::getOrderStates($context->language->id) as $state) {
+
+        foreach (OrderState::getOrderStates($this->context->getLanguageId()) as $state) {
             if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
                 $statesEnabled[] = $state['id_order_state'];
             }

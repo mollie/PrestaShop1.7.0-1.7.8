@@ -15,6 +15,7 @@ namespace Mollie\Service;
 use Context;
 use Country;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 
 class CountryService
 {
@@ -25,9 +26,9 @@ class CountryService
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     public function getActiveCountriesList($onlyActive = true)

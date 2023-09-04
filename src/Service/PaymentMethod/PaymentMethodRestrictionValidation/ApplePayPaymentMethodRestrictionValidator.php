@@ -37,27 +37,19 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use MolPaymentMethod;
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**
-     * @var LegacyContext
-     */
-    private $context;
-
-    /**
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
 
     public function __construct(
-        LegacyContext $context,
         ConfigurationAdapter $configurationAdapter
     ) {
-        $this->context = $context;
         $this->configurationAdapter = $configurationAdapter;
     }
 

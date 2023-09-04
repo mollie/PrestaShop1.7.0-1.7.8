@@ -37,7 +37,7 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Mollie;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
@@ -57,7 +57,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     private $module;
 
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
@@ -80,7 +80,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
 
     public function __construct(
         Mollie $module,
-        LegacyContext $context,
+        Context $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,

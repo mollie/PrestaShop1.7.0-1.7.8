@@ -24,7 +24,7 @@ class VersionSpecificPaymentRestrictionValidationTest extends UnitTestCase
     private $paymentMethod;
 
     /**
-     * @var \Mollie\Adapter\LegacyContext|PHPUnit_Framework_MockObject_MockObject
+     * @var \Mollie\Adapter\Context|PHPUnit_Framework_MockObject_MockObject
      */
     private $context;
 

@@ -14,6 +14,7 @@ namespace Mollie\Builder\Content;
 
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
+use Mollie\Factory\ModuleFactory;
 
 class LogoInfoBlock implements TemplateBuilderInterface
 {
@@ -22,9 +23,9 @@ class LogoInfoBlock implements TemplateBuilderInterface
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

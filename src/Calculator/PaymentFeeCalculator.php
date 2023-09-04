@@ -2,7 +2,7 @@
 
 namespace Mollie\Calculator;
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\NumberUtility;
 use TaxCalculator;
@@ -13,10 +13,10 @@ class PaymentFeeCalculator
 
     /** @var TaxCalculator */
     private $taxCalculator;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
-    public function __construct(TaxCalculator $taxCalculator, LegacyContext $context)
+    public function __construct(TaxCalculator $taxCalculator, Context $context)
     {
         $this->taxCalculator = $taxCalculator;
         $this->context = $context;

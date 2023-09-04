@@ -15,6 +15,7 @@ namespace Mollie\Service;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order;
+use Mollie\Factory\ModuleFactory;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -26,15 +27,9 @@ class CancelService
      */
     private $module;
 
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
-
-    public function __construct(Mollie $module, TransactionService $transactionService)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
-        $this->transactionService = $transactionService;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

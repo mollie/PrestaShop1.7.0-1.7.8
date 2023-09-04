@@ -13,7 +13,7 @@
 namespace Mollie\Service;
 
 use Cart;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
@@ -40,10 +40,10 @@ class CartLinesService
      * @var ToolsAdapter
      */
     private $tools;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
-    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools, LegacyContext $context)
+    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools, Context $context)
     {
         $this->voucherService = $voucherService;
         $this->languageService = $languageService;

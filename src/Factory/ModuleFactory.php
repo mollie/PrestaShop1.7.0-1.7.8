@@ -38,4 +38,12 @@ class ModuleFactory
     {
         return Module::getInstanceByName('mollie')->name;
     }
+
+    public function getModule(): \Mollie
+    {
+        /** @var \Mollie $module */
+        $module = Module::getInstanceByName('mollie');
+
+        return $module;
+    }
 }

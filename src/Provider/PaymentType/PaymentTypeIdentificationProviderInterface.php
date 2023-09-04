@@ -12,7 +12,7 @@
 
 namespace Mollie\Provider\PaymentType;
 
-interface PaymentTypeIdentificationProvider
+interface PaymentTypeIdentificationProviderInterface
 {
     /**
      * @return string

@@ -20,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_5_4_2(Mollie $module): bool
 {
     /** @var ConfigurationAdapter $configuration */
-    $configuration = $module->getMollieContainer(ConfigurationAdapter::class);
+    $configuration = $module->getService(ConfigurationAdapter::class);
 
     $configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, (int) $configuration->get('MOLLIE_APPLE_PAY_DIRECT'));
     $configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, (int) $configuration->get('MOLLIE_APPLE_PAY_DIRECT'));

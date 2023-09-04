@@ -14,7 +14,7 @@ namespace Mollie\Provider\PaymentType;
 
 use Mollie\Api\Endpoints\OrderEndpoint;
 
-class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProvider
+class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProviderInterface
 {
     /**
      * @return string

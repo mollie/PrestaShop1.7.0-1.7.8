@@ -16,6 +16,7 @@ use Configuration;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\CountryRepository;
 
 class ConfigFieldService
@@ -36,12 +37,12 @@ class ConfigFieldService
     private $configurationAdapter;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         ApiService $apiService,
         CountryRepository $countryRepository,
         ConfigurationAdapter $configurationAdapter
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->apiService = $apiService;
         $this->countryRepository = $countryRepository;
         $this->configurationAdapter = $configurationAdapter;

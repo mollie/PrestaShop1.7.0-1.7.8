@@ -22,6 +22,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
@@ -63,13 +64,13 @@ class Installer implements InstallerInterface
     private $orderStateInstaller;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         InstallerInterface $databaseTableInstaller,
         Segment $segment,
         ConfigurationAdapter $configurationAdapter,
         OrderStateInstaller $orderStateInstaller
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;

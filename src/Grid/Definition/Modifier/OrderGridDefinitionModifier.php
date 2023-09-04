@@ -13,6 +13,7 @@
 namespace Mollie\Grid\Definition\Modifier;
 
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Grid\Action\Type\SecondChanceRowAction;
 use Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
@@ -23,9 +24,9 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
 {
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**
@@ -47,7 +48,7 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
                                 'route_param_field' => 'id_order',
                                 'route_param_name' => 'orderId',
                                 'use_inline_display' => true,
-                                'accessibility_checker' => $this->module->getMollieContainer(
+                                'accessibility_checker' => $this->module->getService(
                                     SecondChanceAccessibilityChecker::class
                                 ),
                             ])
