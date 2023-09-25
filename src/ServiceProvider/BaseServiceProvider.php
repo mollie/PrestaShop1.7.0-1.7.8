@@ -14,6 +14,8 @@ use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
+use Mollie\Handler\RetryHandler;
+use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
@@ -102,6 +104,8 @@ final class BaseServiceProvider
     {
         /* Logger */
         $this->addService($container, PrestaLoggerInterface::class, $container->get(PrestaLogger::class));
+
+        $this->addService($container, RetryHandlerInterface::class, $container->get(RetryHandler::class));
 
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
