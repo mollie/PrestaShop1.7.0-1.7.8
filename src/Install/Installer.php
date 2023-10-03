@@ -47,7 +47,7 @@ class Installer implements InstallerInterface
     private $module;
 
     /**
-     * @var InstallerInterface
+     * @var DatabaseTableInstaller
      */
     private $databaseTableInstaller;
 
@@ -65,7 +65,7 @@ class Installer implements InstallerInterface
 
     public function __construct(
         ModuleFactory $moduleFactory,
-        InstallerInterface $databaseTableInstaller,
+        DatabaseTableInstaller $databaseTableInstaller,
         Segment $segment,
         ConfigurationAdapter $configurationAdapter,
         OrderStateInstaller $orderStateInstaller
