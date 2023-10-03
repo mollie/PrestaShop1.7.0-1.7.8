@@ -69,7 +69,7 @@ class Segment implements TrackerInterface
      */
     private $env;
 
-    public function __construct(Context $context, $env)
+    public function __construct(Context $context, Env $env)
     {
         $this->context = $context;
         $this->init();
