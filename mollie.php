@@ -47,7 +47,9 @@ use Mollie\Tracker\Segment;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Validator\OrderConfMailValidator;
 use Mollie\Verification\IsPaymentInformationAvailable;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
+use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -146,8 +148,44 @@ class Mollie extends PaymentModule
             return false;
         }
 
+        try {
+            /** @var PsAccountsInstaller $prestashopAccountsInstaller */
+            $prestashopAccountsInstaller = $this->getService(PsAccountsInstaller::class);
+
+            if (!$prestashopAccountsInstaller->install()) {
+                $this->_errors[] = $this->l('Failed to install Prestashop Accounts module. Please contact support.');
+
+                return false;
+            }
+        } catch (\Throwable $exception) {
+            $this->_errors[] = $this->l('Failed to install Prestashop Accounts module. Please contact support.');
+
+            return false;
+        }
+
+        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+        try {
+            /*
+             * NOTE: install method upgrades the module if there is a newer version
+             */
+            if (
+                $moduleManager->isInstalled('ps_eventbus') &&
+                !$moduleManager->isEnabled('ps_eventbus')
+            ) {
+                $moduleManager->enable('ps_eventbus');
+            }
+
+            $moduleManager->install('ps_eventbus');
+        } catch (Exception $exception) {
+            $this->_errors[] = $this->l('Failed to install/upgrade Prestashop event bus module. Please contact support.');
+
+            return false;
+        }
+
         /** @var Installer $installer */
         $installer = $this->getService(Installer::class);
+
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
 
@@ -226,6 +264,8 @@ class Mollie extends PaymentModule
      */
     public function getContent()
     {
+        // TODO create admin controller for this tab
+
         if (Tools::getValue('ajax')) {
             header('Content-Type: application/json;charset=UTF-8');
 
