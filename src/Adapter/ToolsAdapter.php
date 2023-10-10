@@ -41,4 +41,9 @@ class ToolsAdapter
     {
         return Tools::displayPrice($price, $currency);
     }
+
+    public function isSubmit(string $string): bool
+    {
+        return (bool) Tools::isSubmit($string);
+    }
 }

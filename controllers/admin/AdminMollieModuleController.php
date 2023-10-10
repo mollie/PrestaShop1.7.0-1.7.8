@@ -1,4 +1,7 @@
 <?php
+
+use Mollie\Bootstrap\ModuleTabs;
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -11,18 +14,8 @@
  */
 class AdminMollieModuleController extends ModuleAdminController
 {
-    public function postProcess()
+    public function init()
     {
-        Tools::redirectAdmin(
-        /* @phpstan-ignore-next-line */
-            $this->context->link->getAdminLink(
-                'AdminModules',
-                true,
-                [],
-                [
-                    'configure' => 'mollie',
-                ]
-            )
-        );
+        Tools::redirectAdmin($this->context->link->getAdminLink(ModuleTabs::ADMIN_MOLLIE_SETTINGS_CONTROLLER));
     }
 }

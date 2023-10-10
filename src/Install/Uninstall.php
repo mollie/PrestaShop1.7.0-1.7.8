@@ -15,7 +15,6 @@ namespace Mollie\Install;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Tracker\Segment;
-use Tab;
 
 class Uninstall implements UninstallerInterface
 {
@@ -52,8 +51,6 @@ class Uninstall implements UninstallerInterface
         $this->segment->track();
 
         $this->deleteConfig();
-
-        $this->uninstallTabs();
 
         $this->databaseUninstaller->uninstall();
 
@@ -103,27 +100,6 @@ class Uninstall implements UninstallerInterface
     {
         foreach ($configurations as $configuration) {
             $this->configurationAdapter->delete($configuration);
-        }
-    }
-
-    private function uninstallTabs()
-    {
-        $tabs = [
-            'AdminMollieAjax',
-            'AdminMollieModule',
-        ];
-
-        foreach ($tabs as $tab) {
-            $idTab = Tab::getIdFromClassName($tab);
-
-            if (!$idTab) {
-                continue;
-            }
-
-            $tab = new Tab($idTab);
-            if (!$tab->delete()) {
-                return false;
-            }
         }
     }
 }

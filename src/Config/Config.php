@@ -308,6 +308,9 @@ class Config
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
+    const PRESTASHOP_ACCOUNTS_INSTALLER_VERSION = '5.0.0';
+    const PRESTASHOP_CLOUDSYNC_CDN = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
     public static function getStatuses()
     {
         $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
