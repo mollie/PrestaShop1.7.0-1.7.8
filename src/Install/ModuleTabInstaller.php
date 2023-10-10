@@ -47,7 +47,9 @@ class ModuleTabInstaller
             $this->installTab(
                 $tab['class_name'],
                 $tab['parent_class_name'],
-                $tab['name']
+                $tab['name'],
+                $tab['icon'],
+                $tab['visible']
             );
         }
     }
@@ -55,8 +57,13 @@ class ModuleTabInstaller
     /**
      * @throws CouldNotInstallModule
      */
-    private function installTab(string $className, string $parent, array $name)
-    {
+    private function installTab(
+        string $className,
+        string $parent,
+        array $name,
+        string $icon,
+        bool $visible
+    ) {
         $idParent = $this->tab->getIdFromClassName($parent . '_MTR');
 
         if (!$idParent) {
@@ -67,6 +74,8 @@ class ModuleTabInstaller
         $moduleTab->class_name = $className;
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
+        $moduleTab->icon = $icon;
+        $moduleTab->active = $visible;
 
         $languages = $this->language->getAllLanguages();
         foreach ($languages as $language) {

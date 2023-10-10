@@ -27,6 +27,17 @@ class ModuleTabs
         return [
             [
                 'name' => [
+                    'en' => $this->module->displayName,
+                    'en-US' => $this->module->displayName,
+                ],
+                'class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'parent_class_name' => 'IMPROVE',
+                'ParentClassName' => 'IMPROVE',
+                'visible' => true,
+                'icon' => 'mollie',
+            ],
+            [
+                'name' => [
                     'en' => $this->module->l('AJAX', self::SELF_NAME),
                     'en-US' => $this->module->l('AJAX', self::SELF_NAME),
                 ],
@@ -35,6 +46,7 @@ class ModuleTabs
                 'ParentClassName' => '',
                 'module_tab' => true,
                 'visible' => false,
+                'icon' => '',
             ],
             [
                 'name' => [
@@ -46,6 +58,7 @@ class ModuleTabs
                 'ParentClassName' => '',
                 'module_tab' => true,
                 'visible' => false,
+                'icon' => '',
             ],
         ];
     }

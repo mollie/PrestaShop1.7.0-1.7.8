@@ -28,7 +28,6 @@ use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
-use Tab;
 use Tools;
 use Validate;
 
@@ -118,16 +117,6 @@ class Installer implements InstallerInterface
         }
 
         try {
-            // TODO improve whole tab install process
-            $this->installSpecificTabs();
-        } catch (Exception $e) {
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
-
-            return false;
-        }
-
-        try {
             $this->installVoucherFeatures();
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
@@ -139,11 +128,6 @@ class Installer implements InstallerInterface
         $this->copyEmailTemplates();
 
         return $this->databaseTableInstaller->install();
-    }
-
-    public function installSpecificTabs()
-    {
-        $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
     }
 
     public function getErrors()
@@ -229,28 +213,6 @@ class Installer implements InstallerInterface
         }
         $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
         $this->configurationAdapter->updateValue(Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
-    }
-
-    public function installTab($className, $parent, $name, $active = true, $icon = '')
-    {
-        $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
-
-        $moduleTab = new Tab();
-        $moduleTab->class_name = $className;
-        $moduleTab->id_parent = $idParent;
-        $moduleTab->module = $this->module->name;
-        $moduleTab->active = $active;
-        $moduleTab->icon = $icon; /** @phpstan-ignore-line */
-        $languages = Language::getLanguages(true);
-        foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
-        }
-
-        if (!$moduleTab->save()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
