@@ -118,8 +118,8 @@ class Installer implements InstallerInterface
         }
 
         try {
-            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
+            // TODO improve whole tab install process
+            $this->installSpecificTabs();
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
@@ -139,6 +139,11 @@ class Installer implements InstallerInterface
         $this->copyEmailTemplates();
 
         return $this->databaseTableInstaller->install();
+    }
+
+    public function installSpecificTabs()
+    {
+        $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
     }
 
     public function getErrors()

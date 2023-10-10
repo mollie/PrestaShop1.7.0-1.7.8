@@ -13,10 +13,7 @@
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
-use Mollie\Builder\Content\BaseInfoBlock;
-use Mollie\Builder\Content\LogoInfoBlock;
-use Mollie\Builder\Content\UpdateMessageInfoBlock;
-use Mollie\Builder\FormBuilder;
+use Mollie\Bootstrap\ModuleTabs;
 use Mollie\Builder\InvoicePdfTemplateBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
@@ -33,14 +30,12 @@ use Mollie\Repository\ModuleRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
-use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\ErrorDisplayService;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\LanguageService;
 use Mollie\Service\MollieOrderInfoService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Service\SettingsSaveService;
 use Mollie\Service\ShipmentServiceInterface;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Tracker\Segment;
@@ -70,9 +65,6 @@ class Mollie extends PaymentModule
     const ADDONS = false;
 
     const SUPPORTED_PHP_VERSION = '70080';
-
-    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
-    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
 
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
@@ -276,104 +268,8 @@ class Mollie extends PaymentModule
             }
             exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
-        /** @var ModuleRepository $moduleRepository */
-        $moduleRepository = $this->getService(ModuleRepository::class);
-        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
-        if ($needsUpgrade) {
-            $this->context->controller->errors[] = $this->l('Please upgrade Mollie module');
 
-            return;
-        }
-
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
-
-        if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Select the shop that you want to configure');
-
-            return;
-        }
-
-        /** @var TemplateParserInterface $templateParser */
-        $templateParser = $this->getService(TemplateParserInterface::class);
-
-        $isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
-
-        /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
-            $this->context->controller->errors[] = $this->l('Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab');
-        }
-
-        $errors = [];
-
-        if (Tools::isSubmit("submit{$this->name}")) {
-            /** @var SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->getService(SettingsSaveService::class);
-            $resultMessages = $saveSettingsService->saveSettings($errors);
-            if (!empty($errors)) {
-                $this->context->controller->errors = $resultMessages;
-            } else {
-                $this->context->controller->confirmations = $resultMessages;
-            }
-        }
-
-        Media::addJsDef([
-            'description_message' => addslashes($this->l('Enter a description')),
-            'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
-            'max_amount_message' => addslashes($this->l('You have entered incorrect max amount')),
-
-            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
-            'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
-        ]);
-
-        /* Custom logo JS vars*/
-        Media::addJsDef([
-            'image_size_message' => addslashes($this->l('Upload an image %s%x%s1%')),
-            'not_valid_file_message' => addslashes($this->l('Invalid file: %s%')),
-        ]);
-
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
-
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->getService(LogoInfoBlock::class),
-            $this->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
-
-        /** @var UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->getService(UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
-
-        $html .= $templateParser->parseTemplate(
-            $this->context->smarty,
-            $updateMessageInfoBlockData,
-            $this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
-        );
-
-        /** @var BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getService(BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock->buildParams());
-
-        /** @var FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->getService(FormBuilder::class);
-
-        try {
-            $html .= $settingsFormBuilder->buildSettingsForm();
-        } catch (PrestaShopDatabaseException $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->context->controller->errors[] = $this->l('The database tables are missing. Reset the module.');
-        }
-
-        return $html;
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
     }
 
     /**
@@ -915,27 +811,12 @@ class Mollie extends PaymentModule
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getTabs()
+    public function getTabs(): array
     {
-        return [
-            [
-                'name' => $this->name,
-                'class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-                'ParentClassName' => 'AdminParentShipping',
-                'parent' => 'AdminParentShipping',
-            ],
-            [
-                'name' => $this->l('AJAX', __CLASS__),
-                'class_name' => self::ADMIN_MOLLIE_AJAX_CONTROLLER,
-                'ParentClassName' => self::ADMIN_MOLLIE_CONTROLLER,
-                'parent' => self::ADMIN_MOLLIE_CONTROLLER,
-                'module_tab' => true,
-                'visible' => false,
-            ],
-        ];
+        /** @var ModuleTabs $moduleTabs */
+        $moduleTabs = $this->getService(ModuleTabs::class);
+
+        return $moduleTabs->getTabs();
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)

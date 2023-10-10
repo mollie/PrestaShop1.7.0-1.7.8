@@ -18,7 +18,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "prestashop/php-dev-tools": "*"
+    "prestashop/php-dev-tools": "*",
+    "phpunit/phpunit": "6.5.14"
   },
   "autoload-dev": {
     "psr-4": {

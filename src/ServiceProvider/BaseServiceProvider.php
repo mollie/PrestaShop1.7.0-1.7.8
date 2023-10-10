@@ -69,6 +69,8 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
+use Mollie\Service\EntityManager\EntityManagerInterface;
+use Mollie\Service\EntityManager\ObjectModelManager;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
@@ -178,6 +180,8 @@ final class BaseServiceProvider
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
+
+        $this->addService($container, EntityManagerInterface::class, $container->get(ObjectModelManager::class));
 
         $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
             ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
