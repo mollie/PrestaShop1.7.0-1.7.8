@@ -189,6 +189,11 @@ class AdminMollieSettingsController extends ModuleAdminController
                     return;
                 }
             } catch (\Throwable $exception) {
+                $logger->error('"PrestaShop Accounts" install failed.', [
+                    'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
+                ]);
+
                 $this->context->controller->errors[] =
                     $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
 
