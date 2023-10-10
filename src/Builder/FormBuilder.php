@@ -128,8 +128,6 @@ class FormBuilder
 
         $helper->identifier = $this->module->getIdentifier();
         $helper->submit_action = 'submitmollie';
-        $helper->currentIndex = $this->module->getContext()->link->getAdminLink('AdminModules', false)
-            . "&configure={$this->module->name}&tab_module={$this->module->tab}&module_name={$this->module->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = [

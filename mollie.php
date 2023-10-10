@@ -427,8 +427,7 @@ class Mollie extends PaymentModule
 
         $moduleName = Tools::getValue('configure');
 
-        // We are on module configuration page
-        if ($this->name === $moduleName && 'AdminModules' === $currentController) {
+        if ('AdminMollieSettings' === $currentController) {
             Media::addJsDef([
                 'paymentMethodTaxRulesGroupIdConfig' => Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID,
                 'paymentMethodSurchargeFixedAmountTaxInclConfig' => Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL,
