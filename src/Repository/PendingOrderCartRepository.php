@@ -14,4 +14,8 @@ namespace Mollie\Repository;
 
 final class PendingOrderCartRepository extends AbstractRepository
 {
+    public function __construct()
+    {
+        parent::__construct(\MolPendingOrderCart::class);
+    }
 }

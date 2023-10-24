@@ -139,8 +139,8 @@ class MolPaymentMethod extends ObjectModel
         ],
     ];
 
-    public function getPaymentMethodName()
+    public function getPaymentMethodName(): string
     {
-        return $this->id_method;
+        return (string) $this->id_method;
     }
 }

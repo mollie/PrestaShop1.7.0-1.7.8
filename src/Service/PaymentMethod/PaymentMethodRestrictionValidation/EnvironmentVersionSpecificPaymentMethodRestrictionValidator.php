@@ -39,7 +39,6 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Adapter\Context;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
-use MolPaymentMethod;
 
 /** Validator to check specific cases by environment version for every payment method */
 class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
@@ -72,7 +71,7 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
             if (!$this->isCountryAvailable($paymentMethod)) {
@@ -86,12 +85,12 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }
 
-    private function isCountryAvailable(MolPaymentMethod $paymentMethod)
+    private function isCountryAvailable(\MolPaymentMethod $paymentMethod)
     {
         if ($paymentMethod->is_countries_applicable) {
             return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(

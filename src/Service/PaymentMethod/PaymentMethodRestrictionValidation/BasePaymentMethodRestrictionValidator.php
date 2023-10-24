@@ -36,15 +36,13 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use MolPaymentMethod;
-
 /** Validator to check all cases for every payment method */
 class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isPaymentMethodEnabled($paymentMethod)) {
             return false;
@@ -56,17 +54,17 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }
 
     /**
-     * @param MolPaymentMethod $paymentMethod
+     * @param \MolPaymentMethod $paymentMethod
      *
      * @return bool
      */
-    private function isPaymentMethodEnabled($paymentMethod)
+    private function isPaymentMethodEnabled(\MolPaymentMethod $paymentMethod): bool
     {
         return (bool) $paymentMethod->enabled;
     }
