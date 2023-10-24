@@ -1,6 +1,7 @@
 <?php
 
-use Mollie\Adapter\Context;
+namespace Mollie\Tests\Unit\Service\PaymentMethod\PaymentMethodRestrictionValidation;
+
 use Mollie\Config\Config;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
@@ -13,11 +14,7 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
     public function testIsValid($isApple, $configurationAdapter, $expectedResult)
     {
         $_COOKIE['isApplePayMethod'] = $isApple;
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $contextMock,
             $configurationAdapter
         );
 
@@ -60,7 +57,6 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
     public function testIsSupported($paymentName, $expectedResult)
     {
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $this->mockContext('AT', 'AUD'),
             $this->mockConfigurationAdapter([
                 'PS_SSL_ENABLED_EVERYWHERE' => true,
             ])

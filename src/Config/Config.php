@@ -239,6 +239,11 @@ class Config
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
 
+    /**
+     * @see https://www.mollie.com/en/payments/billie
+     */
+    const MOLLIE_PAYMENT_METHOD_BILLIE = 'billie';
+
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';

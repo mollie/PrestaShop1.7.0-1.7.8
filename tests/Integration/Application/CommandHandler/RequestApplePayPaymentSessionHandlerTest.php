@@ -1,7 +1,10 @@
 <?php
 
+namespace Mollie\Tests\Integration\Application\CommandHandler;
+
 use Mollie\Application\Command\RequestApplePayPaymentSession;
 use Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Mocks\Service\ApiServiceMock;
 
@@ -12,10 +15,10 @@ class RequestApplePayPaymentSessionHandlerTest extends BaseTestCase
      */
     public function testHandle(RequestApplePayPaymentSession $command)
     {
-        /** @var Mollie $mollie */
-        $mollie = Module::getInstanceByName('mollie');
+        /** @var ModuleFactory $moduleFactory */
+        $moduleFactory = $this->getService(ModuleFactory::class);
         $apiServiceMock = new ApiServiceMock();
-        $handler = new RequestApplePayPaymentSessionHandler($mollie, $apiServiceMock);
+        $handler = new RequestApplePayPaymentSessionHandler($moduleFactory, $apiServiceMock);
         $result = $handler->handle($command);
 
         $this->assertArrayHasKey('cartId', $result);
