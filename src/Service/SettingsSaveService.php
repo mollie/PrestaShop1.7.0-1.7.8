@@ -13,7 +13,6 @@
 namespace Mollie\Service;
 
 use Carrier;
-use Configuration;
 use Exception;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -126,7 +125,7 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
-        $oldEnvironment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $oldEnvironment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
@@ -281,9 +280,9 @@ class SettingsSaveService
             }
         }
         try {
-            $this->handleKlarnaInvoiceStatus();
+            $this->handleAuthorizablePaymentInvoiceStatus();
         } catch (Exception $e) {
-            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.', self::FILE_NAME);
+            $errors[] = $this->module->l('There are issues with your authorizable payment statuses, please try resetting Mollie module.', self::FILE_NAME);
         }
 
         if (empty($errors)) {
@@ -384,30 +383,33 @@ class SettingsSaveService
         return $statesEnabled;
     }
 
-    private function handleKlarnaInvoiceStatus()
+    private function handleAuthorizablePaymentInvoiceStatus()
     {
-        $klarnaInvoiceStatus = Tools::getValue(Config::MOLLIE_KLARNA_INVOICE_ON);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
-        if (Config::MOLLIE_STATUS_KLARNA_SHIPPED === $klarnaInvoiceStatus) {
-            $this->updateKlarnaStatuses(true);
+        $klarnaInvoiceStatus = (string) Tools::getValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
+
+        $this->configurationAdapter->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $klarnaInvoiceStatus);
+
+        if (Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED === $klarnaInvoiceStatus) {
+            $this->updateAuthorizablePaymentOrderStatus(true);
 
             return;
         }
 
-        $this->updateKlarnaStatuses(false);
+        $this->updateAuthorizablePaymentOrderStatus(false);
     }
 
-    private function updateKlarnaStatuses($isShipped = true)
+    private function updateAuthorizablePaymentOrderStatus(bool $isShipped = true)
     {
-        $klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
-        $klarnaInvoiceShipped = new OrderState((int) $klarnaInvoiceShippedId);
-        $klarnaInvoiceShipped->invoice = $isShipped;
-        $klarnaInvoiceShipped->update();
+        $authorizablePaymentStatusShippedId = $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED);
+        $authorizablePaymentStatusShipped = new OrderState((int) $authorizablePaymentStatusShippedId);
 
-        $klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-        $klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+        $authorizablePaymentStatusShipped->invoice = $isShipped;
+        $authorizablePaymentStatusShipped->update();
 
-        $klarnaInvoiceAccepted->invoice = !$isShipped;
-        $klarnaInvoiceAccepted->update();
+        $authorizablePaymentStatusAuthorizedId = $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+        $authorizablePaymentStatusAuthorized = new OrderState((int) $authorizablePaymentStatusAuthorizedId);
+
+        $authorizablePaymentStatusAuthorized->invoice = !$isShipped;
+        $authorizablePaymentStatusAuthorized->update();
     }
 }

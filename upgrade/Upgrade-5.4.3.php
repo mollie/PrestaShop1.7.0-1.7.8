@@ -10,6 +10,8 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Config\Config;
 use Mollie\Install\ModuleTabInstaller;
 use Mollie\Logger\PrestaLoggerInterface;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
@@ -37,6 +39,9 @@ function upgrade_module_5_4_3(Mollie $module): bool
 
         return false;
     }
+
+    updateConfigurationValues543($module);
+    updateOrderStatusNames543($module);
 
     return installPsAccounts543($module)
         && installCloudSync543($module);
@@ -94,4 +99,78 @@ function installCloudSync543(Mollie $module): bool
     }
 
     return true;
+}
+
+function updateConfigurationValues543(Mollie $module)
+{
+    /** @var ConfigurationAdapter $configuration */
+    $configuration = $module->getService(ConfigurationAdapter::class);
+
+    if (
+        !empty($configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED))
+        && !empty($configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED))
+        && !empty($configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS))
+        && empty($configuration->get('MOLLIE_STATUS_KLARNA_AUTHORIZED'))
+        && empty($configuration->get('MOLLIE_STATUS_KLARNA_SHIPPED'))
+        && empty($configuration->get('MOLLIE_KLARNA_INVOICE_ON'))
+    ) {
+        return;
+    }
+
+    $klarnaInvoiceOn = $configuration->get('MOLLIE_KLARNA_INVOICE_ON');
+
+    switch ($klarnaInvoiceOn) {
+        case 'MOLLIE_STATUS_KLARNA_AUTHORIZED':
+            $configuration->updateValue(
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS,
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED
+            );
+            break;
+        case 'MOLLIE_STATUS_KLARNA_SHIPPED':
+            $configuration->updateValue(
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS,
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED
+            );
+            break;
+        default:
+            $configuration->updateValue(
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS,
+                Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT
+            );
+    }
+
+    $configuration->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED, (int) $configuration->get('MOLLIE_STATUS_KLARNA_AUTHORIZED'));
+    $configuration->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED, (int) $configuration->get('MOLLIE_STATUS_KLARNA_SHIPPED'));
+
+    $configuration->delete('MOLLIE_STATUS_KLARNA_AUTHORIZED');
+    $configuration->delete('MOLLIE_STATUS_KLARNA_SHIPPED');
+    $configuration->delete('MOLLIE_KLARNA_INVOICE_ON');
+}
+
+function updateOrderStatusNames543(Mollie $module)
+{
+    /** @var ConfigurationAdapter $configuration */
+    $configuration = $module->getService(ConfigurationAdapter::class);
+
+    $authorizablePaymentStatusShippedId = (int) $configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED);
+    $authorizablePaymentStatusShipped = new OrderState((int) $authorizablePaymentStatusShippedId);
+
+    if (is_array($authorizablePaymentStatusShipped->name)) {
+        foreach ($authorizablePaymentStatusShipped->name as $langId => $name) {
+            $authorizablePaymentStatusShipped->name[$langId] = 'Order payment shipped';
+        }
+    }
+
+    $authorizablePaymentStatusShipped->save();
+
+    $authorizablePaymentStatusAuthorizedId = (int) $configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+    $authorizablePaymentStatusAuthorized = new OrderState((int) $authorizablePaymentStatusAuthorizedId);
+
+    if (is_array($authorizablePaymentStatusAuthorized->name)) {
+        foreach ($authorizablePaymentStatusAuthorized->name as $langId => $name) {
+            $authorizablePaymentStatusAuthorized->name[$langId] = 'Order payment authorized';
+        }
+    }
+
+    $authorizablePaymentStatusAuthorized->save();
 }
