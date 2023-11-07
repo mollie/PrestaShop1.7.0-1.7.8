@@ -188,8 +188,7 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class)
             ->withArgument(PaymentMethodRepositoryInterface::class);
 
-        $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class)
-            ->withArgument(Mollie::class);
+        $this->addService($container, CertificateHandlerInterface::class, $container->get(ApplePayDirectCertificateHandler::class));
 
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
