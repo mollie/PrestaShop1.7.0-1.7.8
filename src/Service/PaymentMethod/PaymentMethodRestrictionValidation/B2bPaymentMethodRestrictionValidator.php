@@ -78,11 +78,11 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
 
     private function isVatNumberValid(): bool
     {
-        $billingAddressId = $this->context->getAddressInvoiceId();
+        $billingAddressId = $this->context->getInvoiceAddressId();
 
         /** @var \Address $billingAddress */
         $billingAddress = $this->addressRepository->findOneBy([
-            'id_address' => (int) $billingAddressId,
+            'id_address' => $billingAddressId,
         ]);
 
         /** @var \AddressFormat $addressFormat */

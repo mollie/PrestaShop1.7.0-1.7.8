@@ -3,7 +3,6 @@
 namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
-use Mollie;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
