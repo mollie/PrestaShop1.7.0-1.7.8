@@ -14,4 +14,8 @@ namespace Mollie\Repository;
 
 class MolCustomerRepository extends AbstractRepository
 {
+    public function __construct()
+    {
+        parent::__construct(\MolCustomer::class);
+    }
 }

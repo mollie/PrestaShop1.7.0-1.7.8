@@ -41,6 +41,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -92,7 +93,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     private $configurationAdapter;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         Context $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         OrderTotalProviderInterface $orderTotalProvider,
@@ -101,7 +102,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         MolCustomerRepository $customerRepository,
         ConfigurationAdapter $configurationAdapter
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->orderTotalProvider = $orderTotalProvider;

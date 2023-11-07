@@ -160,7 +160,7 @@ class Context
         );
     }
 
-    public function getAddressInvoiceId(): int
+    public function getInvoiceAddressId(): int
     {
         return (int) $this->getContext()->cart->id_address_invoice;
     }
