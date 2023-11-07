@@ -385,11 +385,11 @@ class SettingsSaveService
 
     private function handleAuthorizablePaymentInvoiceStatus()
     {
-        $klarnaInvoiceStatus = (string) Tools::getValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
+        $authorizablePaymentInvoiceOnStatus = (string) Tools::getValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
 
-        $this->configurationAdapter->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $klarnaInvoiceStatus);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $authorizablePaymentInvoiceOnStatus);
 
-        if (Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED === $klarnaInvoiceStatus) {
+        if (Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED === $authorizablePaymentInvoiceOnStatus) {
             $this->updateAuthorizablePaymentOrderStatus(true);
 
             return;
