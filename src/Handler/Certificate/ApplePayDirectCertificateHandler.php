@@ -13,6 +13,7 @@
 namespace Mollie\Handler\Certificate;
 
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Utility\FileUtility;
 
@@ -30,9 +31,9 @@ class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
     private $mollie;
     private $serverRoot;
 
-    public function __construct(Mollie $mollie)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->mollie = $mollie;
+        $this->mollie = $moduleFactory->getModule();
         $this->serverRoot = $_SERVER['DOCUMENT_ROOT'];
     }
 

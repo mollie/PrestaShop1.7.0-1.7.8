@@ -99,9 +99,9 @@ class OrderCreationHandler
      *
      * @throws \Exception
      */
-    public function createOrder($apiPayment, int $cartId, bool $isKlarnaOrder = false): int
+    public function createOrder($apiPayment, int $cartId, bool $isAuthorizablePayment = false): int
     {
-        $orderStatus = $isKlarnaOrder ?
+        $orderStatus = $isAuthorizablePayment ?
             (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
             (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
 

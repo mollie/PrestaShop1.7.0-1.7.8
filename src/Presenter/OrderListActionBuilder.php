@@ -13,6 +13,7 @@
 namespace Mollie\Presenter;
 
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Smarty_Data;
 
 class OrderListActionBuilder
@@ -23,9 +24,9 @@ class OrderListActionBuilder
      */
     private $mollie;
 
-    public function __construct(Mollie $mollie)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->mollie = $mollie;
+        $this->mollie = $moduleFactory->getModule();
     }
 
     public function buildOrderPaymentResendButton(Smarty_Data $smarty, $orderId)
