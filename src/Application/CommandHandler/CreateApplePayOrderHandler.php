@@ -34,6 +34,10 @@ use MolPaymentMethod;
 use Order;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class CreateApplePayOrderHandler
 {
     const FILE_NAME = 'CreateApplePayOrderHandler';

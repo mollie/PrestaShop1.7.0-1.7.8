@@ -46,6 +46,10 @@ use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule

@@ -17,6 +17,10 @@ use Country;
 use Mollie;
 use Mollie\Factory\ModuleFactory;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CountryService
 {
     const FILE_NAME = 'CountryService';

@@ -20,6 +20,10 @@ use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Raven_Client;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Handle Error.
  */

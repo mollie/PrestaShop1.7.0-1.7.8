@@ -40,6 +40,10 @@ use Mollie\Adapter\Context;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /** Validator to check specific cases by environment version for every payment method */
 class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {

@@ -1,9 +1,23 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use League\Container\ReflectionContainer;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class LeagueServiceContainerProvider implements ServiceContainerProviderInterface
 {

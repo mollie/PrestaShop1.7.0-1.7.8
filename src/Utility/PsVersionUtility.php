@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PsVersionUtility
 {
     public static function isPsVersionHigherThen(string $psVersion, string $higherThen, string $operator = '>='): bool

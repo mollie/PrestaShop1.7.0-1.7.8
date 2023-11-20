@@ -15,6 +15,10 @@ namespace Mollie\Adapter;
 use Currency;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ToolsAdapter
 {
     public function strtoupper($str)
