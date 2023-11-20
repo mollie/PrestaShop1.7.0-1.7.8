@@ -18,6 +18,10 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\NumberUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieAjaxModuleFrontController extends AbstractMollieController
 {
     const FILE_NAME = 'ajax';
@@ -43,7 +47,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $cart = Context::getContext()->cart;
 
         /** @var ToolsAdapter $tools */
-        $tools = $this->module->getMollieContainer(ToolsAdapter::class);
+        $tools = $this->module->getService(ToolsAdapter::class);
 
         $paymentMethodId = (int) $tools->getValue('paymentMethodId');
 
@@ -68,7 +72,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         }
 
         /** @var CurrencyRepositoryInterface $currencyRepository */
-        $currencyRepository = $this->module->getMollieContainer(CurrencyRepositoryInterface::class);
+        $currencyRepository = $this->module->getService(CurrencyRepositoryInterface::class);
 
         /** @var Currency $cartCurrency */
         $cartCurrency = $currencyRepository->findOneBy([
@@ -76,10 +80,10 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         ]);
 
         /** @var PaymentFeeProviderInterface $paymentFeeProvider */
-        $paymentFeeProvider = $this->module->getMollieContainer(PaymentFeeProviderInterface::class);
+        $paymentFeeProvider = $this->module->getService(PaymentFeeProviderInterface::class);
 
         /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->module->getMollieContainer(ConfigurationAdapter::class);
+        $configuration = $this->module->getService(ConfigurationAdapter::class);
 
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());

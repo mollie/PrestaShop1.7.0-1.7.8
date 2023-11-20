@@ -14,6 +14,10 @@ namespace Mollie\Factory;
 
 use Module;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ModuleFactory
 {
     public function getModuleVersion()
@@ -37,5 +41,13 @@ class ModuleFactory
     public function getModuleName()
     {
         return Module::getInstanceByName('mollie')->name;
+    }
+
+    public function getModule(): \Mollie
+    {
+        /** @var \Mollie $module */
+        $module = Module::getInstanceByName('mollie');
+
+        return $module;
     }
 }

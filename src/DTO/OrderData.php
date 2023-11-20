@@ -16,6 +16,11 @@ use Address;
 use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\Object\Payment;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderData implements JsonSerializable
 {
@@ -85,7 +90,7 @@ class OrderData implements JsonSerializable
     private $lines;
 
     /**
-     * @var array
+     * @var Payment
      */
     private $payment;
 
@@ -358,17 +363,19 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return Payment
      */
-    public function getPayment()
+    public function getPayment(): Payment
     {
         return $this->payment;
     }
 
     /**
-     * @param array $payment
+     * @param \Mollie\DTO\Object\Payment $payment
+     *
+     * @maps payment
      */
-    public function setPayment($payment)
+    public function setPayment(Payment $payment)
     {
         $this->payment = $payment;
     }
@@ -448,7 +455,7 @@ class OrderData implements JsonSerializable
             'locale' => $this->getLocale(),
             'orderNumber' => $this->getOrderNumber(),
             'lines' => $lines,
-            'payment' => $this->getPayment(),
+            'payment' => $this->getPayment()->jsonSerialize(),
             'consumerDateOfBirth' => $this->getConsumerDateOfBirth(),
         ];
 
@@ -460,7 +467,9 @@ class OrderData implements JsonSerializable
             $result['shippingAddress']['phone'] = $this->deliveryPhoneNumber;
         }
 
-        return $result;
+        return array_filter($result, static function ($val) {
+            return $val !== null && $val !== '';
+        });
     }
 
     private function cleanUpInput($input, $defaultValue = 'N/A')

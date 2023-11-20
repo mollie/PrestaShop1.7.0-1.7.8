@@ -16,6 +16,10 @@ use Context;
 use Mollie\Config\Config;
 use Shop;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ConfigurationAdapter
 {
     public function get($key, $idShop = null, $idLang = null, $idShopGroup = null)

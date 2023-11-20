@@ -13,27 +13,30 @@
 namespace Mollie\Service;
 
 use Carrier;
-use Configuration;
-use Context;
 use Exception;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\TagsUtility;
 use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SettingsSaveService
 {
@@ -50,7 +53,7 @@ class SettingsSaveService
     private $countryRepository;
 
     /**
-     * @var PaymentMethodRepository
+     * @var PaymentMethodRepositoryInterface
      */
     private $paymentMethodRepository;
 
@@ -84,25 +87,25 @@ class SettingsSaveService
      */
     private $applePayDirectCertificateHandler;
 
-    /** @var Shop */
-    private $shop;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var Context */
+    private $context;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         CountryRepository $countryRepository,
-        PaymentMethodRepository $paymentMethodRepository,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         ApiService $apiService,
         MolCarrierInformationService $carrierInformationService,
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
         ApiKeyService $apiKeyService,
         CertificateHandlerInterface $applePayDirectCertificateHandler,
-        Shop $shop,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        Context $context
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->countryRepository = $countryRepository;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
@@ -111,8 +114,8 @@ class SettingsSaveService
         $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
         $this->apiService = $apiService;
         $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
-        $this->shop = $shop;
         $this->configurationAdapter = $configurationAdapter;
+        $this->context = $context;
     }
 
     /**
@@ -126,7 +129,7 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
-        $oldEnvironment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $oldEnvironment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
@@ -203,7 +206,7 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, $this->context->getShopId());
         }
 
         if ($paymentOptionPositions) {
@@ -281,9 +284,9 @@ class SettingsSaveService
             }
         }
         try {
-            $this->handleKlarnaInvoiceStatus();
+            $this->handleAuthorizablePaymentInvoiceStatus();
         } catch (Exception $e) {
-            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.', self::FILE_NAME);
+            $errors[] = $this->module->l('There are issues with your authorizable payment statuses, please try resetting Mollie module.', self::FILE_NAME);
         }
 
         if (empty($errors)) {
@@ -321,7 +324,7 @@ class SettingsSaveService
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
             );
             $carriers = Carrier::getCarriers(
-                Context::getContext()->language->id,
+                $this->context->getLanguageId(),
                 false,
                 false,
                 false,
@@ -374,8 +377,8 @@ class SettingsSaveService
     private function getStatusesValue($key)
     {
         $statesEnabled = [];
-        $context = Context::getContext();
-        foreach (OrderState::getOrderStates($context->language->id) as $state) {
+
+        foreach (OrderState::getOrderStates($this->context->getLanguageId()) as $state) {
             if (Tools::isSubmit($key . '_' . $state['id_order_state'])) {
                 $statesEnabled[] = $state['id_order_state'];
             }
@@ -384,30 +387,33 @@ class SettingsSaveService
         return $statesEnabled;
     }
 
-    private function handleKlarnaInvoiceStatus()
+    private function handleAuthorizablePaymentInvoiceStatus()
     {
-        $klarnaInvoiceStatus = Tools::getValue(Config::MOLLIE_KLARNA_INVOICE_ON);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
-        if (Config::MOLLIE_STATUS_KLARNA_SHIPPED === $klarnaInvoiceStatus) {
-            $this->updateKlarnaStatuses(true);
+        $authorizablePaymentInvoiceOnStatus = (string) Tools::getValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
+
+        $this->configurationAdapter->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $authorizablePaymentInvoiceOnStatus);
+
+        if (Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED === $authorizablePaymentInvoiceOnStatus) {
+            $this->updateAuthorizablePaymentOrderStatus(true);
 
             return;
         }
 
-        $this->updateKlarnaStatuses(false);
+        $this->updateAuthorizablePaymentOrderStatus(false);
     }
 
-    private function updateKlarnaStatuses($isShipped = true)
+    private function updateAuthorizablePaymentOrderStatus(bool $isShipped = true)
     {
-        $klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
-        $klarnaInvoiceShipped = new OrderState((int) $klarnaInvoiceShippedId);
-        $klarnaInvoiceShipped->invoice = $isShipped;
-        $klarnaInvoiceShipped->update();
+        $authorizablePaymentStatusShippedId = $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED);
+        $authorizablePaymentStatusShipped = new OrderState((int) $authorizablePaymentStatusShippedId);
 
-        $klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-        $klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+        $authorizablePaymentStatusShipped->invoice = $isShipped;
+        $authorizablePaymentStatusShipped->update();
 
-        $klarnaInvoiceAccepted->invoice = !$isShipped;
-        $klarnaInvoiceAccepted->update();
+        $authorizablePaymentStatusAuthorizedId = $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+        $authorizablePaymentStatusAuthorized = new OrderState((int) $authorizablePaymentStatusAuthorizedId);
+
+        $authorizablePaymentStatusAuthorized->invoice = !$isShipped;
+        $authorizablePaymentStatusAuthorized->update();
     }
 }

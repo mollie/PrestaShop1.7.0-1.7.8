@@ -13,7 +13,7 @@
 namespace Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
@@ -74,7 +74,7 @@ class CartLinesServiceTest extends TestCase
         }
 
         $voucherService = $this->getMockBuilder(VoucherService::class)->disableOriginalConstructor()->getMock();
-        $context = $this->getMockBuilder(LegacyContext::class)->getMock();
+        $context = $this->getMockBuilder(Context::class)->getMock();
 
         $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter, $context);
 

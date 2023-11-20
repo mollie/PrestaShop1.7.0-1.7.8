@@ -16,9 +16,13 @@ use Cart;
 use CartRule;
 use Context;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
-use Mollie\Repository\PaymentMethodRepository;
 use Order;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentReturnService
 {
@@ -37,19 +41,9 @@ class PaymentReturnService
     private $context;
 
     /**
-     * @var PaymentMethodRepository
-     */
-    private $paymentMethodRepository;
-
-    /**
      * @var RepeatOrderLinkFactory
      */
     private $orderLinkFactory;
-
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
 
     /**
      * @var CartRuleQuantityChangeHandlerInterface
@@ -57,17 +51,13 @@ class PaymentReturnService
     private $cartRuleQuantityChangeHandlerInterface;
 
     public function __construct(
-        Mollie $module,
-        PaymentMethodRepository $paymentMethodRepository,
+        ModuleFactory $moduleFactory,
         RepeatOrderLinkFactory $orderLinkFactory,
-        TransactionService $transactionService,
         CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->context = Context::getContext();
-        $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderLinkFactory = $orderLinkFactory;
-        $this->transactionService = $transactionService;
         $this->cartRuleQuantityChangeHandlerInterface = $cartRuleQuantityChangeHandlerInterface;
     }
 

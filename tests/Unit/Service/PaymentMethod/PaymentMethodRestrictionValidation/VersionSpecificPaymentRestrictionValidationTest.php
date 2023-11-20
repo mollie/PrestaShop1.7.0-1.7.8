@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 use Mollie\Config\Config;
 use Mollie\Provider\EnvironmentVersionProvider;
@@ -24,7 +34,7 @@ class VersionSpecificPaymentRestrictionValidationTest extends UnitTestCase
     private $paymentMethod;
 
     /**
-     * @var \Mollie\Adapter\LegacyContext|PHPUnit_Framework_MockObject_MockObject
+     * @var \Mollie\Adapter\Context|PHPUnit_Framework_MockObject_MockObject
      */
     private $context;
 

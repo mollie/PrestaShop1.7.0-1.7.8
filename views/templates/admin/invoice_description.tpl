@@ -1,16 +1,18 @@
 {**
-* Mollie       https://www.mollie.nl
-*
-* @author      Mollie B.V. <info@mollie.nl>
-* @copyright   Mollie B.V.
-* @link        https://github.com/mollie/PrestaShop
-* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-*}
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 <p>
-    {l s='Select when to send Klarna invoices' mod='mollie'}
+    {l s='Select when to create the Order invoice' mod='mollie'}
 </p>
 <p class="help-block">
-    {l s='Default: The invoice is created based on Order settings > Statuses. There is no custom status created for Klarna.' mod='mollie'}
+    {l s='Default: The invoice is created based on Order settings > Statuses. There is no custom status created.' mod='mollie'}
 </p>
 <p class="help-block">
     {l s='Authorised: Create a full invoice when the order is authorized. Custom status is created.' mod='mollie'}

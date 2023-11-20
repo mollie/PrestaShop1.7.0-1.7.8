@@ -12,24 +12,19 @@
 
 namespace Mollie\Service;
 
-use Mollie;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentsTranslationService
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
     /**
      * @var LanguageService
      */
     private $languageService;
 
-    public function __construct(
-        Mollie $module,
-        LanguageService $languageService
-    ) {
-        $this->module = $module;
+    public function __construct(LanguageService $languageService)
+    {
         $this->languageService = $languageService;
     }
 

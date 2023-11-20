@@ -15,6 +15,10 @@ namespace Mollie\Adapter;
 use Currency;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ToolsAdapter
 {
     public function strtoupper($str)
@@ -40,5 +44,10 @@ class ToolsAdapter
     public function displayPrice(float $price, Currency $currency): string
     {
         return Tools::displayPrice($price, $currency);
+    }
+
+    public function isSubmit(string $string): bool
+    {
+        return (bool) Tools::isSubmit($string);
     }
 }

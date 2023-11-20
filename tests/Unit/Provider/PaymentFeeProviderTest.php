@@ -1,9 +1,19 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Tests\Unit\Provider;
 
 use Address;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Exception\ExceptionCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
@@ -16,7 +26,7 @@ use TaxCalculator;
 
 class PaymentFeeProviderTest extends TestCase
 {
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
     /** @var AddressRepositoryInterface */
     private $addressRepository;
@@ -37,7 +47,7 @@ class PaymentFeeProviderTest extends TestCase
     {
         parent::setUp();
 
-        $this->context = $this->createMock(LegacyContext::class);
+        $this->context = $this->createMock(Context::class);
         $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
         $this->taxCalculatorProvider = $this->createMock(TaxCalculatorProvider::class);
 

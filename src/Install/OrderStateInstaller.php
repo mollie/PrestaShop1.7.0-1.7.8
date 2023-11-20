@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Install;
 
@@ -10,6 +20,10 @@ use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Service\OrderStateImageService;
 use OrderState;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderStateInstaller implements InstallerInterface
 {
@@ -33,7 +47,7 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    public function install()
+    public function install(): bool
     {
         $this->installOrderState(
             Config::MOLLIE_STATUS_PARTIAL_REFUND,
@@ -69,9 +83,9 @@ class OrderStateInstaller implements InstallerInterface
         );
 
         $this->installOrderState(
-            Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+            Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
             new OrderStateData(
-                'Klarna payment authorized',
+                'Order payment authorized',
                 '#8A2BE2',
                 true,
                 true,
@@ -85,9 +99,9 @@ class OrderStateInstaller implements InstallerInterface
         );
 
         $this->installOrderState(
-            Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+            Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
             new OrderStateData(
-                'Klarna payment shipped',
+                'Order payment shipped',
                 '#8A2BE2',
                 true,
                 true,

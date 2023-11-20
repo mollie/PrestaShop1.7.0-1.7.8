@@ -21,6 +21,10 @@ use MolOrderPaymentFee;
 use Order;
 use PrestaShop\PrestaShop\Core\Localization\Locale;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
     /** @var Order */

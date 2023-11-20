@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use Country;
 use Db;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class CountryRepository extends AbstractRepository
 {
     public function __construct()

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Tests\Integration\Install;
 
@@ -86,7 +96,7 @@ class OrderStateInstallerTest extends BaseTestCase
                 'pdfInvoice' => false,
             ],
             [
-                'key' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+                'key' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
                 'color' => '#8A2BE2',
                 'sendEmail' => true,
                 'logable' => true,
@@ -97,7 +107,7 @@ class OrderStateInstallerTest extends BaseTestCase
                 'pdfInvoice' => true,
             ],
             [
-                'key' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                'key' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
                 'color' => '#8A2BE2',
                 'sendEmail' => true,
                 'logable' => true,

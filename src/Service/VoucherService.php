@@ -16,6 +16,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Repository\AttributeRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class VoucherService
 {
     /**

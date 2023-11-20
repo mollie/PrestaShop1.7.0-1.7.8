@@ -13,6 +13,10 @@
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\ProfileIdProviderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
     /** @var Mollie */
@@ -55,7 +59,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
     public function setMedia()
     {
         /** @var ProfileIdProviderInterface $profileIdProvider */
-        $profileIdProvider = $this->module->getMollieContainer(ProfileIdProviderInterface::class);
+        $profileIdProvider = $this->module->getService(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($this->module->getApiClient()),

@@ -37,8 +37,9 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Mollie;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -46,6 +47,10 @@ use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
 {
@@ -57,7 +62,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     private $module;
 
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
@@ -79,14 +84,14 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     private $orderTotalProvider;
 
     public function __construct(
-        Mollie $module,
-        LegacyContext $context,
+        ModuleFactory $moduleFactory,
+        Context $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;

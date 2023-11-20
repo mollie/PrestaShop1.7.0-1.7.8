@@ -12,15 +12,29 @@
 
 namespace Mollie\Service\EntityManager;
 
-use ObjectModel;
-use PrestaShopException;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 interface EntityManagerInterface
 {
     /**
-     * @param ObjectModel $model
+     * @param \ObjectModel $model
+     * @param string $unitOfWorkType - @see ObjectModelUnitOfWork
+     * @param string|null $specificKey
      *
-     * @throws PrestaShopException
+     * @return EntityManagerInterface
      */
-    public function flush(ObjectModel $model);
+    public function persist(
+        \ObjectModel $model,
+        string $unitOfWorkType,
+        $specificKey = null
+    ): EntityManagerInterface;
+
+    /**
+     * @return array<\ObjectModel>
+     *
+     * @throws \PrestaShopException
+     */
+    public function flush(): array;
 }

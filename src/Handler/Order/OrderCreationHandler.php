@@ -46,6 +46,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
@@ -55,6 +56,10 @@ use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use PrestaShop\Decimal\Number;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderCreationHandler
 {
@@ -78,14 +83,14 @@ class OrderCreationHandler
     private $paymentFeeProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderPaymentFeeHandler $orderPaymentFeeHandler,
         OrderStatusService $orderStatusService,
         PaymentFeeProviderInterface $paymentFeeProvider
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
@@ -98,9 +103,9 @@ class OrderCreationHandler
      *
      * @throws \Exception
      */
-    public function createOrder($apiPayment, int $cartId, bool $isKlarnaOrder = false): int
+    public function createOrder($apiPayment, int $cartId, bool $isAuthorizablePayment = false): int
     {
-        $orderStatus = $isKlarnaOrder ?
+        $orderStatus = $isAuthorizablePayment ?
             (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
             (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
 
@@ -189,7 +194,7 @@ class OrderCreationHandler
     public function createBankTransferOrder($paymentData, Cart $cart)
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
             (int) $cart->id,
             (int) Configuration::get(Config::MOLLIE_STATUS_OPEN),

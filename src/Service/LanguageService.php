@@ -17,6 +17,11 @@ use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class LanguageService
 {
@@ -27,9 +32,9 @@ class LanguageService
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     public function getLang()
