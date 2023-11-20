@@ -21,10 +21,6 @@ use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieReturnModuleFrontController extends AbstractMollieController

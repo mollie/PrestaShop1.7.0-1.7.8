@@ -1,7 +1,4 @@
 <?php
-
-use Mollie\Bootstrap\ModuleTabs;
-
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -12,6 +9,9 @@ use Mollie\Bootstrap\ModuleTabs;
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Bootstrap\ModuleTabs;
+
 class AdminMollieModuleController extends ModuleAdminController
 {
     public function init()
