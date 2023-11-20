@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 5.4.3 ##
++ Enabled PrestaShop CloudSync
 + Migrated dependency injection service from Symfony to League container.
 + Overall improvements and bug fixes.
 
