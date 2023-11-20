@@ -18,6 +18,10 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\NumberUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieAjaxModuleFrontController extends AbstractMollieController
 {
     const FILE_NAME = 'ajax';

@@ -19,6 +19,10 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class IssuerService
 {
     /**

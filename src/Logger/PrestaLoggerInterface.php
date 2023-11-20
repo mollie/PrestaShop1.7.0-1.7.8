@@ -14,6 +14,10 @@ namespace Mollie\Logger;
 
 use Psr\Log\LoggerInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PrestaLoggerInterface extends LoggerInterface
 {
 }

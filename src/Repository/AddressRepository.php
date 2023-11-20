@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use Address;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AddressRepository extends AbstractRepository implements AddressRepositoryInterface
 {
     public function __construct()

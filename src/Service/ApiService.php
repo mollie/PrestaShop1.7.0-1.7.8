@@ -33,6 +33,10 @@ use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiService implements ApiServiceInterface
 {
     private $errors = [];

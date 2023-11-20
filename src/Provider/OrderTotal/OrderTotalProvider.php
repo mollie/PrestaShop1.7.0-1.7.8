@@ -39,6 +39,10 @@ namespace Mollie\Provider\OrderTotal;
 use Exception;
 use Mollie\Adapter\Context;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderTotalProvider implements OrderTotalProviderInterface
 {
     /**

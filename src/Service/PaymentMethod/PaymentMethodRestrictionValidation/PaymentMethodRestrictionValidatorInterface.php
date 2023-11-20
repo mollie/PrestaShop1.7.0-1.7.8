@@ -36,6 +36,10 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentMethodRestrictionValidatorInterface
 {
     /**

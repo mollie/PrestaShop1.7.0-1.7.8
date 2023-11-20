@@ -12,6 +12,10 @@
 
 use Mollie\Bootstrap\ModuleTabs;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminMollieModuleController extends ModuleAdminController
 {
     public function init()

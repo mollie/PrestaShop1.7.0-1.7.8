@@ -12,6 +12,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TaxRepository extends AbstractRepository implements TaxRepositoryInterface
 {
     public function __construct()

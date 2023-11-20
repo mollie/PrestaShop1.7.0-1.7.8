@@ -111,6 +111,10 @@ use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Load base services here which are usually required
  */

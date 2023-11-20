@@ -16,6 +16,10 @@ use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Smarty_Data;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderListActionBuilder
 {
     const FILE_NAME = 'OrderListActionBuilder';

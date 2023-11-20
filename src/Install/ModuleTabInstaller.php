@@ -20,6 +20,10 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ModuleTabInstaller
 {
     private $tab;

@@ -12,6 +12,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomerRepository extends AbstractRepository implements CustomerRepositoryInterface
 {
     public function __construct()

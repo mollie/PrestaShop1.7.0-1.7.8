@@ -17,6 +17,10 @@ use Mollie\Repository\TaxRuleRepositoryInterface;
 use Tax;
 use TaxCalculator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TaxCalculatorProvider
 {
     /** @var TaxRuleRepositoryInterface */

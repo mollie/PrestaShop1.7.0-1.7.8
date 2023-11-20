@@ -21,6 +21,10 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Service\OrderStateImageService;
 use OrderState;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderStateInstaller implements InstallerInterface
 {
     /** @var ModuleFactory */

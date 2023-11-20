@@ -14,6 +14,10 @@ namespace Mollie\Verification;
 
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class IsPaymentInformationAvailable
 {
     /** @var PaymentMethodRepositoryInterface */

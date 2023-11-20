@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use Db;
 use DbQuery;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TaxRulesGroupRepository extends AbstractRepository implements TaxRulesGroupRepositoryInterface
 {
     public function __construct()

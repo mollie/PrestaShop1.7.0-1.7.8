@@ -14,6 +14,10 @@ namespace Mollie\Bootstrap;
 
 use Mollie\Factory\ModuleFactory;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ModuleTabs
 {
     const SELF_NAME = 'ModuleTabs';

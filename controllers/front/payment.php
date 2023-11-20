@@ -21,7 +21,7 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
 
 if (!defined('_PS_VERSION_')) {
-    return;
+    exit;
 }
 
 require_once dirname(__FILE__) . '/../../mollie.php';

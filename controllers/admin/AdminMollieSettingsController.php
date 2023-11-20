@@ -27,6 +27,10 @@ use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledExcepti
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminMollieSettingsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminMollieSettingsController';

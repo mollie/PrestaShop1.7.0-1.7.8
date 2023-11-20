@@ -16,6 +16,10 @@ use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 use Mollie\Factory\ModuleFactory;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LogoInfoBlock implements TemplateBuilderInterface
 {
     /**

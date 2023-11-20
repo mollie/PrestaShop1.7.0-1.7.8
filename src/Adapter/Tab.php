@@ -14,6 +14,10 @@ namespace Mollie\Adapter;
 
 use Tab as PrestashopTab;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Tab
 {
     public function initTab(int $idTab = null): PrestashopTab

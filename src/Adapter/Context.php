@@ -39,6 +39,10 @@ namespace Mollie\Adapter;
 use Configuration as PrestashopConfiguration;
 use Context as PrestaShopContext;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Context
 {
     public function getContext()

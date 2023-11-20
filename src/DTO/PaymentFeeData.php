@@ -12,6 +12,10 @@
 
 namespace Mollie\DTO;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFeeData
 {
     /** @var float */

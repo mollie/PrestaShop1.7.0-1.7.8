@@ -12,6 +12,10 @@
 
 namespace Mollie\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ExceptionCode
 {
     // Infrastructure error codes starts from 1000

@@ -12,6 +12,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface TaxRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     public function getTaxRule(int $taxRulesGroupId, int $countryId, int $stateId): array;

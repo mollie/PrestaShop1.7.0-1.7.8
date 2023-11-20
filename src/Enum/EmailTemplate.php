@@ -12,6 +12,10 @@
 
 namespace Mollie\Enum;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class EmailTemplate
 {
     const PAYMENT = 'payment';

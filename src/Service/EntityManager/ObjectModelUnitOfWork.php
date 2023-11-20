@@ -12,6 +12,10 @@
 
 namespace Mollie\Service\EntityManager;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /** In memory entity manager object model unit of work */
 class ObjectModelUnitOfWork
 {

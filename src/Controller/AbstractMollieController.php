@@ -15,6 +15,10 @@ use Mollie\Errors\Error;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Utility\PsVersionUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractMollieController extends \ModuleFrontControllerCore
 {
     protected function respond($status, $statusCode = HttpStatusCode::HTTP_OK, $message = '')

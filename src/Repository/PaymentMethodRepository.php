@@ -22,6 +22,10 @@ use mysqli_result;
 use PDOStatement;
 use PrestaShopDatabaseException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentMethodRepository extends AbstractRepository implements PaymentMethodRepositoryInterface
 {
     public function __construct()

@@ -12,6 +12,10 @@
 
 namespace Mollie\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CouldNotInstallModule extends MollieException
 {
     public static function failedToInstallOrderState(string $orderStateName, \Exception $exception): self

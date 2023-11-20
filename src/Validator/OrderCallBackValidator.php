@@ -17,6 +17,10 @@ use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\SecureKeyUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderCallBackValidator
 {
     /**

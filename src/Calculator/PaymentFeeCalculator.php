@@ -17,6 +17,10 @@ use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\NumberUtility;
 use TaxCalculator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFeeCalculator
 {
     const MAX_PERCENTAGE = 100;

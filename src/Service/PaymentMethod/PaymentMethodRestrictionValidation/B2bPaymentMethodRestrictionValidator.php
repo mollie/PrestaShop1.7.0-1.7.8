@@ -19,6 +19,10 @@ use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /** @var Context */

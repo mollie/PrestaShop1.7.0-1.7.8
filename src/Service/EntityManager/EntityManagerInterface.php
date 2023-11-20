@@ -12,6 +12,10 @@
 
 namespace Mollie\Service\EntityManager;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface EntityManagerInterface
 {
     /**

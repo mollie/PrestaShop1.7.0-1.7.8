@@ -14,6 +14,10 @@ namespace Mollie\Adapter;
 
 use Language as PrestashopLanguage;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Language
 {
     public function getAllLanguages(): array
