@@ -39,3 +39,26 @@ e2e-1784-prepare:
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
 	make e2e1784p
+
+#PS1785
+e2eh1785:
+	# detaching containers
+	docker-compose -f docker-compose.1785.yml up -d --force-recreate
+	# sees what containers are running
+	docker-compose -f docker-compose.1785.yml ps
+	# waits for mysql to load
+	/bin/bash .docker/wait-for-container.sh mysql-mollie-1785
+	# configuring your prestashop
+	docker exec -i prestashop-mollie-1785 sh -c "rm -rf /var/www/html/install"
+	# configuring base database
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1785_2.sql
+	# installing module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	# uninstalling module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall mollie"
+	# installing the module again
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	# enabling the module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
+	# chmod all folders
+	docker exec -i prestashop-mollie-1785 sh -c "chmod -R 777 /var/www/html"
