@@ -35,6 +35,8 @@
 import 'cypress-iframe';
 // or
 require('cypress-iframe');
+// Cypress improved terminal logs
+require('cypress-terminal-report/src/installLogsCollector')();
 // Import commands.js using ES2015 syntax:
 import './commands'
 
@@ -49,3 +51,4 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 Cypress.Keyboard.defaults({
   keystrokeDelay: 0,
 })
+import "cypress-fail-fast";
