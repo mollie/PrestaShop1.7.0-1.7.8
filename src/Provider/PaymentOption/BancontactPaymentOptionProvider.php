@@ -48,6 +48,10 @@ use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
 {
     const FILE_NAME = 'BancontactPaymentOptionProvider';

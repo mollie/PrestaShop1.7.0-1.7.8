@@ -26,6 +26,10 @@ use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolliePaymentMailService
 {
     const FILE_NAME = 'MolliePaymentMailService';

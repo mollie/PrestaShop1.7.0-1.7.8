@@ -20,6 +20,10 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomerService
 {
     /**

@@ -47,6 +47,10 @@ use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BasePaymentOptionProvider implements PaymentOptionProviderInterface
 {
     const FILE_NAME = 'BasePaymentOptionProvider';

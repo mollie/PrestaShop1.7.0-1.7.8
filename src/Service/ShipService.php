@@ -17,6 +17,10 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Factory\ModuleFactory;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShipService
 {
     const FILE_NAME = 'ShipService';

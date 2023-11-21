@@ -14,6 +14,10 @@ namespace Mollie\Exception;
 
 use Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShipmentCannotBeSentException extends Exception
 {
     const NO_SHIPPING_INFORMATION = 1;

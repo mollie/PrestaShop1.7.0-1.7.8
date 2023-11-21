@@ -39,6 +39,10 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Adapter\Context;
 use PrestaShop\Decimal\Number;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /** Validator to check if cart total is valid for amount restrictions */
 class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
