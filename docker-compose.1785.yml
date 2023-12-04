@@ -31,13 +31,14 @@ services:
       context: .
       dockerfile: .docker/Dockerfile.1785
     environment:
-      PS_INSTALL_AUTO: 0
+      PS_INSTALL_AUTO: 1
       DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: demoshop1785.ngrok.io:8002
+      PS_DOMAIN: demoshop1785.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
+      PS_ENABLE_SSL: 1
     depends_on:
       - mysql
     ports:
