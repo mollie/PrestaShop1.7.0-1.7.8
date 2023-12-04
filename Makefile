@@ -62,3 +62,11 @@ e2eh1785:
 	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
 	# chmod all folders
 	docker exec -i prestashop-mollie-1785 sh -c "chmod -R 777 /var/www/html"
+
+e2eh1785_build_only_without_sql_seed:
+	# detaching containers
+	docker-compose -f docker-compose.1785.yml up -d --force-recreate
+	# sees what containers are running
+	docker-compose -f docker-compose.1785.yml ps
+	# waits for mysql to load
+	/bin/bash .docker/wait-for-container.sh mysql-klarnapayment-1785
