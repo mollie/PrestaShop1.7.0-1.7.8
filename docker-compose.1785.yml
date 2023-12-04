@@ -44,9 +44,7 @@ services:
     ports:
       - "8002:80"
     volumes:
-      - ./:/var/www/html/modules/mollie:cached
-      - ./tests/seed/settings1785/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings1785/parameters.php:/var/www/html/app/config/parameters.php
+      - ./:/var/www/html/modules/mollie
       - ./.docker/.htaccess1785:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net_1785
