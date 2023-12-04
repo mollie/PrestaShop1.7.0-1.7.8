@@ -26,6 +26,7 @@
     "human-signals": "^3.0.1"
   },
   "dependencies": {
-    "cypress-fail-fast": "^7.1.0"
+    "cypress-fail-fast": "^7.1.0",
+    "cypress-terminal-report": "^5.3.9"
   }
 }
