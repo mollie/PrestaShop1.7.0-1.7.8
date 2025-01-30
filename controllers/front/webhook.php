@@ -18,6 +18,7 @@ use Mollie\Exception\TransactionException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,6 +28,8 @@ require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieWebhookModuleFrontController extends AbstractMollieController
 {
+    const FILE_NAME = 'webhook';
+
     /** @var Mollie */
     public $module;
     /** @var bool */
@@ -70,6 +73,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getService(TransactionService::class);
+
+        if (!Tools::getValue('security_token')) {
+            $this->respond('Missing security token',
+                HttpStatusCode::HTTP_BAD_REQUEST
+            );
+        }
 
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {

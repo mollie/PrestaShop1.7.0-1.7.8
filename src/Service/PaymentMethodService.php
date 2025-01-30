@@ -296,7 +296,9 @@ class PaymentMethodService
         $webhookUrl = $this->context->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => Mollie\Utility\HashUtility::hash($cart->secure_key),
+            ],
             true
         );
 
@@ -420,7 +422,9 @@ class PaymentMethodService
             $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
-                [],
+                [
+                    'security_token' => Mollie\Utility\HashUtility::hash($secureKey),
+                ],
                 true
             ));
 

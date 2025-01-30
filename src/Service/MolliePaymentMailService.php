@@ -186,7 +186,9 @@ class MolliePaymentMailService
         $paymentData['webhookUrl'] = $context->link->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => Mollie\Utility\HashUtility::hash($cart->secure_key)
+            ],
             true,
             null,
             $cart->id_shop
