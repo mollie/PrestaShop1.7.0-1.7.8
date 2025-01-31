@@ -360,13 +360,9 @@ class PaymentMethodService
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
 
-                $company = new Company();
-
-                if (!empty($billingAddress->vat_number)) {
+                if (!empty($billingAddress->vat_number) && !empty($customer->siret)) {
+                    $company = new Company();
                     $company->setVatNumber($billingAddress->vat_number);
-                }
-
-                if (!empty($customer->siret)) {
                     $company->setRegistrationNumber($customer->siret);
                 }
 
