@@ -296,7 +296,9 @@ class PaymentMethodService
         $webhookUrl = $this->context->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => Mollie\Utility\HashUtility::hash($cart->secure_key),
+            ],
             true
         );
 
@@ -358,13 +360,9 @@ class PaymentMethodService
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
 
-                $company = new Company();
-
-                if (!empty($billingAddress->vat_number)) {
+                if (!empty($billingAddress->vat_number) && !empty($customer->siret)) {
+                    $company = new Company();
                     $company->setVatNumber($billingAddress->vat_number);
-                }
-
-                if (!empty($customer->siret)) {
                     $company->setRegistrationNumber($customer->siret);
                 }
 
@@ -420,7 +418,9 @@ class PaymentMethodService
             $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
-                [],
+                [
+                    'security_token' => Mollie\Utility\HashUtility::hash($secureKey),
+                ],
                 true
             ));
 
