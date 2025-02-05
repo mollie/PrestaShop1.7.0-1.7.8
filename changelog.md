@@ -5,7 +5,7 @@
 ## Changes in release 5.4.3 ##
 + New payment method: Billie.
 + Enabled PrestaShop CloudSync.
-+ Upserted latest major fixes from lates Mollie 6.x module.
++ Upserted latest major fixes from latestgit s Mollie 6.x module.
 + Minor improvements & fixes.
 
 ## Changes in release 5.4.2 ##
