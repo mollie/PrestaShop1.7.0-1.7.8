@@ -12,6 +12,10 @@
 
 namespace Mollie\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieException extends \Exception
 {
     const CUSTOMER_EXCEPTION = 1;

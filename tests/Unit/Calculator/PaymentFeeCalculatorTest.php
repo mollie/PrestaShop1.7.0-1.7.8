@@ -1,10 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Calculator;
 
 namespace Unit\Calculator;
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use PHPUnit\Framework\TestCase;
 use TaxCalculator;
@@ -13,7 +23,7 @@ class PaymentFeeCalculatorTest extends TestCase
 {
     /** @var TaxCalculator */
     private $taxCalculator;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
     public function setUp()
@@ -21,7 +31,7 @@ class PaymentFeeCalculatorTest extends TestCase
         parent::setUp();
 
         $this->taxCalculator = $this->createMock(TaxCalculator::class);
-        $this->context = $this->createMock(LegacyContext::class);
+        $this->context = $this->createMock(Context::class);
     }
 
     public function testItCalculatesFixedFee()

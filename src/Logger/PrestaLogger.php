@@ -14,6 +14,10 @@ namespace Mollie\Logger;
 
 use Mollie\Exception\NotImplementedException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PrestaLogger implements PrestaLoggerInterface
 {
     public function emergency($message, array $context = [])

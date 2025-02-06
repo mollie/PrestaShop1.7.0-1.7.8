@@ -9,20 +9,17 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Bootstrap\ModuleTabs;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminMollieModuleController extends ModuleAdminController
 {
-    public function postProcess()
+    public function init()
     {
-        Tools::redirectAdmin(
-        /* @phpstan-ignore-next-line */
-            $this->context->link->getAdminLink(
-                'AdminModules',
-                true,
-                [],
-                [
-                    'configure' => 'mollie',
-                ]
-            )
-        );
+        Tools::redirectAdmin($this->context->link->getAdminLink(ModuleTabs::ADMIN_MOLLIE_SETTINGS_CONTROLLER));
     }
 }

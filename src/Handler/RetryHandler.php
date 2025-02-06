@@ -14,6 +14,10 @@ namespace Mollie\Handler;
 
 use Mollie\Exception\RetryOverException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RetryHandler implements RetryHandlerInterface
 {
     const DEFAULT_MAX_RETRY = 3;

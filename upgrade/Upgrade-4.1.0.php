@@ -12,6 +12,7 @@
 
 use Mollie\Config\Config;
 use Mollie\Install\Installer;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_4_1_0($module)
 {
     /** @var Installer $installer */
-    $installer = $module->getMollieContainer(Installer::class);
+    $installer = $module->getService(Installer::class);
 
     $awaitingOrderStatusId = Configuration::get(Config::MOLLIE_STATUS_AWAITING);
     $orderStatus = new OrderState($awaitingOrderStatusId);
@@ -45,12 +46,12 @@ function upgrade_module_4_1_0($module)
         return false;
     }
 
-    /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
-    $paymentMethodsRepo = $module->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+    /** @var PaymentMethodRepositoryInterface $paymentMethodsRepo */
+    $paymentMethodsRepo = $module->getService(PaymentMethodRepositoryInterface::class);
     $paymentMethods = $paymentMethodsRepo->findAll();
 
     /** @var Installer $installer */
-    $installer = $module->getMollieContainer(Installer::class);
+    $installer = $module->getService(Installer::class);
     $installer->installVoucherFeatures();
 
     foreach ($installer::getHooks() as $hook) {

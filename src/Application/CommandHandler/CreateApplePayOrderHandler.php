@@ -17,13 +17,14 @@ use Cart;
 use Configuration;
 use Country;
 use Currency;
-use Link;
 use Mollie;
+use Mollie\Adapter\Context;
 use Mollie\Application\Command\CreateApplePayOrder;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\ShippingContent;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\RetryOverException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
@@ -32,6 +33,10 @@ use Mollie\Utility\OrderNumberUtility;
 use MolPaymentMethod;
 use Order;
 use Tools;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class CreateApplePayOrderHandler
 {
@@ -50,30 +55,28 @@ final class CreateApplePayOrderHandler
      */
     private $mollieOrderCreationService;
     /**
-     * @var Link
-     */
-    private $link;
-    /**
      * @var Mollie
      */
     private $module;
     /** @var RetryHandlerInterface */
     private $retryHandler;
+    /** @var Context */
+    private $context;
 
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
-        Link $link,
-        Mollie $module,
-        RetryHandlerInterface $retryHandler
+        ModuleFactory $moduleFactory,
+        RetryHandlerInterface $retryHandler,
+        Context $context
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
-        $this->link = $link;
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->retryHandler = $retryHandler;
+        $this->context = $context;
     }
 
     public function handle(CreateApplePayOrder $command): array
@@ -135,7 +138,7 @@ final class CreateApplePayOrderHandler
         $this->deleteAddress($order->id_address_delivery);
         $this->deleteAddress($order->id_address_invoice);
 
-        $successUrl = $this->link->getPageLink(
+        $successUrl = $this->context->getPageLink(
             'order-confirmation',
             true,
             null,

@@ -22,14 +22,18 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
-use Tab;
 use Tools;
 use Validate;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Installer implements InstallerInterface
 {
@@ -46,7 +50,7 @@ class Installer implements InstallerInterface
     private $module;
 
     /**
-     * @var InstallerInterface
+     * @var DatabaseTableInstaller
      */
     private $databaseTableInstaller;
 
@@ -63,13 +67,13 @@ class Installer implements InstallerInterface
     private $orderStateInstaller;
 
     public function __construct(
-        Mollie $module,
-        InstallerInterface $databaseTableInstaller,
+        ModuleFactory $moduleFactory,
+        DatabaseTableInstaller $databaseTableInstaller,
         Segment $segment,
         ConfigurationAdapter $configurationAdapter,
         OrderStateInstaller $orderStateInstaller
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
@@ -112,16 +116,6 @@ class Installer implements InstallerInterface
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
-
-            return false;
-        }
-
-        try {
-            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
-        } catch (Exception $e) {
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
 
             return false;
         }
@@ -223,28 +217,6 @@ class Installer implements InstallerInterface
         }
         $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
         $this->configurationAdapter->updateValue(Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
-    }
-
-    public function installTab($className, $parent, $name, $active = true, $icon = '')
-    {
-        $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
-
-        $moduleTab = new Tab();
-        $moduleTab->class_name = $className;
-        $moduleTab->id_parent = $idParent;
-        $moduleTab->module = $this->module->name;
-        $moduleTab->active = $active;
-        $moduleTab->icon = $icon; /** @phpstan-ignore-line */
-        $languages = Language::getLanguages(true);
-        foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
-        }
-
-        if (!$moduleTab->save()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

@@ -13,12 +13,16 @@
 namespace Mollie\Verification\PaymentType;
 
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Provider\PaymentType\PaymentTypeIdentificationProvider;
+use Mollie\Provider\PaymentType\PaymentTypeIdentificationProviderInterface;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CanBeRegularPaymentType implements PaymentTypeVerificationInterface
 {
     /**
-     * @var PaymentTypeIdentificationProvider
+     * @var PaymentTypeIdentificationProviderInterface
      */
     private $regularPaymentTypeIdentification;
 
@@ -29,7 +33,7 @@ class CanBeRegularPaymentType implements PaymentTypeVerificationInterface
 
     public function __construct(
         ToolsAdapter $toolsAdapter,
-        PaymentTypeIdentificationProvider $regularPaymentTypeIdentification
+        PaymentTypeIdentificationProviderInterface $regularPaymentTypeIdentification
     ) {
         $this->regularPaymentTypeIdentification = $regularPaymentTypeIdentification;
         $this->toolsAdapter = $toolsAdapter;

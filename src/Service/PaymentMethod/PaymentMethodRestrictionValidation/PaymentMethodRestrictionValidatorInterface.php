@@ -36,25 +36,27 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use MolPaymentMethod;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 interface PaymentMethodRestrictionValidatorInterface
 {
     /**
      * Returns if payment is valid
      *
-     * @param MolPaymentMethod $paymentMethod
+     * @param \MolPaymentMethod $paymentMethod
      *
      * @return bool
      */
-    public function isValid(MolPaymentMethod $paymentMethod);
+    public function isValid(\MolPaymentMethod $paymentMethod): bool;
 
     /**
      * Returns if payment restriction validator is supported by payment name
      *
-     * @param MolPaymentMethod $paymentMethod
+     * @param \MolPaymentMethod $paymentMethod
      *
      * @return bool
      */
-    public function supports(MolPaymentMethod $paymentMethod);
+    public function supports(\MolPaymentMethod $paymentMethod): bool;
 }

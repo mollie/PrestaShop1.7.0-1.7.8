@@ -14,7 +14,7 @@ namespace Mollie\Service;
 
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\BaseCollection;
@@ -32,7 +32,10 @@ use Mollie\Utility\NumberUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class ApiService implements ApiServiceInterface
 {
@@ -68,13 +71,9 @@ class ApiService implements ApiServiceInterface
      */
     private $transactionService;
 
-    /**
-     * @var Shop
-     */
-    private $shop;
     /** @var TaxCalculatorProvider */
     private $taxCalculatorProvider;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
     public function __construct(
@@ -83,9 +82,8 @@ class ApiService implements ApiServiceInterface
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         ConfigurationAdapter $configurationAdapter,
         TransactionService $transactionService,
-        Shop $shop,
         TaxCalculatorProvider $taxCalculatorProvider,
-        LegacyContext $context
+        Context $context
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -93,7 +91,6 @@ class ApiService implements ApiServiceInterface
         $this->configurationAdapter = $configurationAdapter;
         $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $this->transactionService = $transactionService;
-        $this->shop = $shop;
         $this->taxCalculatorProvider = $taxCalculatorProvider;
         $this->context = $context;
     }
@@ -412,7 +409,7 @@ class ApiService implements ApiServiceInterface
             throw new MollieApiException('Mollie API is null. Check if API key is correct', MollieApiException::MOLLIE_API_IS_NULL);
         }
 
-        return $api->wallets->requestApplePayPaymentSession($this->shop->domain, $validationUrl);
+        return $api->wallets->requestApplePayPaymentSession($this->context->getShopDomain(), $validationUrl);
     }
 
     private function getSurchargeFixedAmountTaxInclPrice(float $priceTaxExcl, int $taxRulesGroupId, int $countryId): float

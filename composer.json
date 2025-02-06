@@ -11,11 +11,14 @@
         "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.11.0",
         "vlucas/phpdotenv": "3.4",
-        "prestashop/autoindex": "^1.0"
+        "league/container": "2.5.0",
+        "prestashop/prestashop-accounts-installer": "^1.0.4",
+        "prestashop/module-lib-service-container": "v2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "prestashop/php-dev-tools": "*"
+        "phpunit/phpunit": "6.5.14",
+        "prestashop/autoindex": "v1.0.0"
     },
     "autoload-dev": {
         "psr-4": {

@@ -13,6 +13,7 @@
 namespace Mollie\Service;
 
 use Configuration;
+use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -20,25 +21,28 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use MolOrderPaymentFee;
 use MolPaymentMethod;
 use PrestaShopException;
-use Shop;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderPaymentFeeService
 {
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
-    /** @var Shop */
-    private $shop;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+    /** @var Context */
+    private $context;
 
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        Shop $shop,
-        PaymentFeeProviderInterface $paymentFeeProvider
+        PaymentFeeProviderInterface $paymentFeeProvider,
+        Context $context
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->shop = $shop;
         $this->paymentFeeProvider = $paymentFeeProvider;
+        $this->context = $context;
     }
 
     public function createOrderPaymentFee(int $orderId, int $cartId, PaymentFeeData $paymentFeeData)
@@ -66,7 +70,7 @@ class OrderPaymentFeeService
         // TODO order and payment fee in same service? Separate logic as this is probably used in cart context
 
         $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->shop->id);
+        $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->context->getShopId());
         $molPaymentMethod = new MolPaymentMethod($paymentId);
 
         return $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);

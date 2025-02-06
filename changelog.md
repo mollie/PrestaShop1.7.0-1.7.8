@@ -2,6 +2,12 @@
 
 # Changelog #
 
+## Changes in release 5.4.3 ##
++ New payment method: Billie.
++ Enabled PrestaShop CloudSync.
++ Upserted latest major fixes from latestgit s Mollie 6.x module.
++ Minor improvements & fixes.
+
 ## Changes in release 5.4.2 ##
 + Decoupled Apple Pay direct feature flag into product and cart separate settings.
 + Overall improvements and bug fixes.

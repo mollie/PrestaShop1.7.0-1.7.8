@@ -16,8 +16,13 @@ use MolCustomer;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CustomerService
 {
@@ -31,9 +36,9 @@ class CustomerService
      */
     private $customerRepository;
 
-    public function __construct(Mollie $mollie, MolCustomerRepository $customerRepository)
+    public function __construct(ModuleFactory $moduleFactory, MolCustomerRepository $customerRepository)
     {
-        $this->mollie = $mollie;
+        $this->mollie = $moduleFactory->getModule();
         $this->customerRepository = $customerRepository;
     }
 
