@@ -21,15 +21,18 @@ use Customer;
 use Gender;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\Object\Company;
+use Mollie\DTO\Object\Payment;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -45,8 +48,11 @@ use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentMethodService
 {
@@ -89,23 +95,19 @@ class PaymentMethodService
      */
     private $paymentMethodRestrictionValidation;
 
-    /**
-     * @var Shop
-     */
-    private $shop;
     /** @var GenderRepositoryInterface */
     private $genderRepository;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         PaymentMethodRepositoryInterface $methodRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
@@ -114,14 +116,13 @@ class PaymentMethodService
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Shop $shop,
         GenderRepositoryInterface $genderRepository,
         ConfigurationAdapter $configurationAdapter,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        LegacyContext $context,
+        Context $context,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->methodRepository = $methodRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
@@ -130,7 +131,6 @@ class PaymentMethodService
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->phoneNumberProvider = $phoneNumberProvider;
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
-        $this->shop = $shop;
         $this->genderRepository = $genderRepository;
         $this->configurationAdapter = $configurationAdapter;
         $this->paymentFeeProvider = $paymentFeeProvider;
@@ -196,7 +196,7 @@ class PaymentMethodService
             return [];
         }
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->id) ?: [];
+        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->context->getShopId()) ?: [];
 
         try {
             $mollieMethods = $this->getSupportedMollieMethods();
@@ -296,7 +296,9 @@ class PaymentMethodService
         $webhookUrl = $this->context->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => Mollie\Utility\HashUtility::hash($cart->secure_key),
+            ],
             true
         );
 
@@ -358,14 +360,23 @@ class PaymentMethodService
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
 
+                if (!empty($billingAddress->vat_number) && !empty($customer->siret)) {
+                    $company = new Company();
+                    $company->setVatNumber($billingAddress->vat_number);
+                    $company->setRegistrationNumber($customer->siret);
+                }
+
                 $orderData->setBillingAddress($billingAddress);
                 $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
+
             if (isset($cart->id_address_delivery)) {
                 $shippingAddress = new Address((int) $cart->id_address_delivery);
+
                 $orderData->setShippingAddress($shippingAddress);
                 $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shippingAddress));
             }
+
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
@@ -397,30 +408,40 @@ class PaymentMethodService
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory
                 ));
-            $payment = [];
-            if ($cardToken) {
-                $payment['cardToken'] = $cardToken;
+
+            $payment = new Payment();
+
+            if (!empty($cardToken)) {
+                $payment->setCardToken($cardToken);
             }
-            $payment['webhookUrl'] = $this->context->getModuleLink(
+
+            $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
-                [],
+                [
+                    'security_token' => Mollie\Utility\HashUtility::hash($secureKey),
+                ],
                 true
-            );
+            ));
 
-            if ($issuer) {
-                $payment['issuer'] = $issuer;
+            if (!empty($issuer)) {
+                $payment->setIssuer($issuer);
             }
 
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
-                if ($molCustomer) {
-                    $payment['customerId'] = $molCustomer->customer_id;
+
+                if ($molCustomer && !empty($molCustomer->customer_id)) {
+                    $payment->setCustomerId($molCustomer->customer_id);
                 }
             }
 
-            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
-                $payment['applePayPaymentToken'] = $applePayToken;
+            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && !empty($applePayToken)) {
+                $payment->setApplePayPaymentToken($applePayToken);
+            }
+
+            if (isset($company)) {
+                $payment->setCompany($company);
             }
 
             $orderData->setPayment($payment);
@@ -472,7 +493,7 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods()
     {
-        $address = new Address($this->context->getAddressInvoiceId());
+        $address = new Address($this->context->getInvoiceAddressId());
         $country = new Country($address->id_country);
 
         $cartAmount = $this->orderTotalProvider->getOrderTotal();

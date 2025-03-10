@@ -12,26 +12,23 @@
 
 namespace Mollie\Builder\Content\PaymentOption;
 
-use Mollie;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Builder\TemplateBuilderInterface;
 use Mollie\Service\IssuerService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class IdealDropdownInfoBlock implements TemplateBuilderInterface
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
-
     /**
      * @var IssuerService
      */
     private $issuerService;
 
-    public function __construct(Mollie $module, IssuerService $issuerService)
+    public function __construct(IssuerService $issuerService)
     {
-        $this->module = $module;
         $this->issuerService = $issuerService;
     }
 

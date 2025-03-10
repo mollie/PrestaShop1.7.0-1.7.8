@@ -14,7 +14,11 @@ namespace Mollie\Provider\PaymentType;
 
 use Mollie\Api\Endpoints\OrderEndpoint;
 
-class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProvider
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class RegularPaymentTypeIdentification implements PaymentTypeIdentificationProviderInterface
 {
     /**
      * @return string

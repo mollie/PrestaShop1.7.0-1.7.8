@@ -20,6 +20,10 @@ use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Raven_Client;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Handle Error.
  */
@@ -35,11 +39,8 @@ class ErrorHandler
      */
     private static $instance;
 
-    public function __construct($module)
+    public function __construct(Mollie $module)
     {
-        /** @var Env $env */
-        $env = $module->getMollieContainer(Env::class);
-
         try {
             $this->client = new ModuleFilteredRavenClient(
                 Config::SENTRY_KEY,
@@ -51,7 +52,7 @@ class ErrorHandler
                         'prestashop_version' => _PS_VERSION_,
                         'mollie_is_enabled' => \Module::isEnabled('mollie'),
                         'mollie_is_installed' => \Module::isInstalled('mollie'),
-                        'env' => $env->get('SENTRY_ENV'),
+                        'env' => (new Env())->get('SENTRY_ENV'),
                     ],
                 ]
             );

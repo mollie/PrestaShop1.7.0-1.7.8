@@ -47,6 +47,10 @@ use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderPaymentFeeHandler
 {
     /** @var OrderPaymentFeeService */

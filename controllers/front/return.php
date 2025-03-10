@@ -15,7 +15,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\TransactionUtility;
@@ -52,14 +52,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $customer = $context->customer;
 
         /** @var OrderCallBackValidator $orderCallBackValidator */
-        $orderCallBackValidator = $this->module->getMollieContainer(OrderCallBackValidator::class);
+        $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
 
         if (!$orderCallBackValidator->validate($key, $idCart)) {
             Tools::redirectLink('index.php');
         }
 
         /** @var CustomerFactory $customerFactory */
-        $customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
+        $customerFactory = $this->module->getService(CustomerFactory::class);
         $this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
         if (Tools::getValue('ajax')) {
             $this->processAjax();
@@ -71,8 +71,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $data = [];
         $cart = null;
 
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
         if (Tools::getIsset('cart_id')) {
             $idCart = (int) Tools::getValue('cart_id');
 
@@ -92,7 +92,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             // any paid payments for this cart?
 
             if (false === $data['mollie_info']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart));
+                $orderId = (int) Order::getOrderByCartId($idCart);
+                $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart)) : [];
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
@@ -184,11 +185,31 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
 
-        $transactionId = Tools::getValue('transaction_id');
-        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
+        $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
+
+        if (Tools::getValue('failed')) {
+            $this->setWarning($notSuccessfulPaymentMessage);
+
+            Tools::redirect($this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                [
+                    'action' => 'show',
+                ]
+            ));
+        }
+
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+
+        $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
+        $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
+
+        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
+
         if (!$dbPayment) {
             exit(json_encode([
                 'success' => false,
@@ -229,11 +250,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
-        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
-        $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
-
         /** @var PaymentReturnService $paymentReturnService */
-        $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
+        $paymentReturnService = $this->module->getService(PaymentReturnService::class);
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:

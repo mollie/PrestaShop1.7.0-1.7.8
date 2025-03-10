@@ -16,12 +16,17 @@ use Configuration;
 use Context;
 use Mollie;
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class IssuerService
 {
     /**
-     * @var PaymentMethodRepository
+     * @var PaymentMethodRepositoryInterface
      */
     private $paymentMethodRepository;
     /**
@@ -29,10 +34,10 @@ class IssuerService
      */
     private $module;
 
-    public function __construct(Mollie $module, PaymentMethodRepository $paymentMethodRepository)
+    public function __construct(ModuleFactory $moduleFactory, PaymentMethodRepositoryInterface $paymentMethodRepository)
     {
         $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->module = $module;
+        $this->module = $moduleFactory;
     }
 
     public function getIdealIssuers()

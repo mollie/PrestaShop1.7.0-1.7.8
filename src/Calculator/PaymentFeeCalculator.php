@@ -1,11 +1,25 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Calculator;
 
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\NumberUtility;
 use TaxCalculator;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentFeeCalculator
 {
@@ -13,10 +27,10 @@ class PaymentFeeCalculator
 
     /** @var TaxCalculator */
     private $taxCalculator;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
-    public function __construct(TaxCalculator $taxCalculator, LegacyContext $context)
+    public function __construct(TaxCalculator $taxCalculator, Context $context)
     {
         $this->taxCalculator = $taxCalculator;
         $this->context = $context;

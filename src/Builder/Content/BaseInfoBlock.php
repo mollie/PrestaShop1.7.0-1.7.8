@@ -16,6 +16,11 @@ use Configuration;
 use Context;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
+use Mollie\Factory\ModuleFactory;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BaseInfoBlock implements TemplateBuilderInterface
 {
@@ -24,9 +29,9 @@ class BaseInfoBlock implements TemplateBuilderInterface
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

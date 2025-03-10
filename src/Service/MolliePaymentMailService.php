@@ -20,17 +20,22 @@ use Mollie;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class MolliePaymentMailService
 {
     const FILE_NAME = 'MolliePaymentMailService';
 
     /**
-     * @var PaymentMethodRepository
+     * @var PaymentMethodRepositoryInterface
      */
     private $paymentMethodRepository;
 
@@ -45,11 +50,11 @@ class MolliePaymentMailService
     private $mailService;
 
     public function __construct(
-        Mollie $module,
-        PaymentMethodRepository $paymentMethodRepository,
+        ModuleFactory $moduleFactory,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
         MailService $mailService
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->mailService = $mailService;
     }
@@ -181,7 +186,9 @@ class MolliePaymentMailService
         $paymentData['webhookUrl'] = $context->link->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => Mollie\Utility\HashUtility::hash($cart->secure_key)
+            ],
             true,
             null,
             $cart->id_shop

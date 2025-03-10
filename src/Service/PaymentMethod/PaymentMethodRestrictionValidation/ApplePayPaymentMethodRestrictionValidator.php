@@ -37,34 +37,29 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
-use Mollie\Config\Config;
-use MolPaymentMethod;
+use Mollie\Api\Types\PaymentMethod;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    /**
-     * @var LegacyContext
-     */
-    private $context;
-
     /**
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
 
     public function __construct(
-        LegacyContext $context,
         ConfigurationAdapter $configurationAdapter
     ) {
-        $this->context = $context;
         $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isSslEnabledEverywhere()) {
             return false;
@@ -80,15 +75,15 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
-        return $paymentMethod->getPaymentMethodName() == Config::MOLLIE_METHOD_ID_APPLE_PAY;
+        return $paymentMethod->getPaymentMethodName() === PaymentMethod::APPLEPAY;
     }
 
     /**
      * @return bool
      */
-    private function isSslEnabledEverywhere()
+    private function isSslEnabledEverywhere(): bool
     {
         return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
     }
@@ -96,7 +91,7 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     /**
      * @return bool
      */
-    private function isPaymentMethodInCookie()
+    private function isPaymentMethodInCookie(): bool
     {
         if (!isset($_COOKIE['isApplePayMethod'])) {
             return false;

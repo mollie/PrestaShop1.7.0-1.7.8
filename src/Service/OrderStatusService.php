@@ -25,6 +25,10 @@ use PrestaShopException;
 use Tools;
 use Validate;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderStatusService
 {
     /**
@@ -76,7 +80,14 @@ class OrderStatusService
         if (0 === (int) $statusId) {
             return;
         }
+
         $order = new Order((int) $orderId);
+
+        $orderHistory = $order->getHistory($order->id_lang, $statusId);
+
+        if (!empty($orderHistory)) {
+            return;
+        }
 
         if (!Validate::isLoadedObject($order)) {
             return;
@@ -157,6 +168,6 @@ class OrderStatusService
     {
         return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
             ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)) ||
-            ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED));
+            ((int) $statusId === (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED));
     }
 }

@@ -16,6 +16,10 @@ use ObjectModel;
 use PrestaShopCollection;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractRepository implements ReadOnlyRepositoryInterface
 {
     /**
@@ -26,7 +30,7 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     /**
      * @param string $fullyClassifiedClassName
      */
-    public function __construct($fullyClassifiedClassName)
+    public function __construct(string $fullyClassifiedClassName)
     {
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }

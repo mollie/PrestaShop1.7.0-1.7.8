@@ -36,18 +36,21 @@
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Mollie\Adapter\LegacyContext;
-use MolPaymentMethod;
+use Mollie\Adapter\Context;
 use PrestaShop\Decimal\Number;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /** Validator to check if cart total is valid for amount restrictions */
 class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
     public function __construct(
-        LegacyContext $context
+        Context $context
     ) {
         $this->context = $context;
     }
@@ -55,7 +58,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         $orderTotal = $this->context->getCart()->getOrderTotal();
 
@@ -77,7 +80,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }

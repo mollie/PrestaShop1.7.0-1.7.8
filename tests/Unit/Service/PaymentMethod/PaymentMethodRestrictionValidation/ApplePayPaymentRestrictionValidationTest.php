@@ -1,6 +1,17 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
-use Mollie\Adapter\LegacyContext;
+namespace Mollie\Tests\Unit\Service\PaymentMethod\PaymentMethodRestrictionValidation;
+
 use Mollie\Config\Config;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
@@ -13,11 +24,7 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
     public function testIsValid($isApple, $configurationAdapter, $expectedResult)
     {
         $_COOKIE['isApplePayMethod'] = $isApple;
-        $contextMock = $this->getMockBuilder(LegacyContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $contextMock,
             $configurationAdapter
         );
 
@@ -60,7 +67,6 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
     public function testIsSupported($paymentName, $expectedResult)
     {
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $this->mockContext('AT', 'AUD'),
             $this->mockConfigurationAdapter([
                 'PS_SSL_ENABLED_EVERYWHERE' => true,
             ])

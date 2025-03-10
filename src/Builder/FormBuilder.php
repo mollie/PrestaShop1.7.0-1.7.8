@@ -12,15 +12,15 @@
 
 namespace Mollie\Builder;
 
-use Configuration;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\Context;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiService;
@@ -31,8 +31,11 @@ use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use OrderStateCore as OrderState;
-use Smarty;
 use ToolsCore as Tools;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class FormBuilder
 {
@@ -53,15 +56,6 @@ class FormBuilder
      */
     private $countryService;
 
-    private $lang;
-
-    /**
-     * @var Smarty
-     */
-    private $smarty;
-
-    private $link;
-
     /**
      * @var ConfigFieldService
      */
@@ -81,29 +75,23 @@ class FormBuilder
     private $configurationAdapter;
     /** @var TaxRulesGroupRepositoryInterface */
     private $taxRulesGroupRepository;
-    /** @var LegacyContext */
+    /** @var Context */
     private $context;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $moduleFactory,
         ApiService $apiService,
         CountryService $countryService,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
-        $lang,
-        Smarty $smarty,
-        $link,
         CreditCardLogoProvider $creditCardLogoProvider,
         ConfigurationAdapter $configurationAdapter,
         TaxRulesGroupRepositoryInterface $taxRulesGroupRepository,
-        LegacyContext $context
+        Context $context
     ) {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
         $this->apiService = $apiService;
         $this->countryService = $countryService;
-        $this->lang = $lang;
-        $this->smarty = $smarty;
-        $this->link = $link;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -144,8 +132,6 @@ class FormBuilder
 
         $helper->identifier = $this->module->getIdentifier();
         $helper->submit_action = 'submitmollie';
-        $helper->currentIndex = $this->module->getContext()->link->getAdminLink('AdminModules', false)
-            . "&configure={$this->module->name}&tab_module={$this->module->tab}&module_name={$this->module->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = [
@@ -424,8 +410,6 @@ class FormBuilder
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => $this->configurationAdapter->get(Config::MOLLIE_VOUCHER_CATEGORY),
-            'klarnaPayments' => Config::KLARNA_PAYMENTS,
-            'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirectProduct' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
             'applePayDirectCart' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
             'applePayDirectStyle' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
@@ -450,7 +434,7 @@ class FormBuilder
         $advancedSettings = 'advanced_settings';
         $input = [];
         $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->getLanguageId()));
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('Use selected locale in webshop', self::FILE_NAME),
@@ -499,22 +483,22 @@ class FormBuilder
 
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('Select when to create the Klarna invoice', self::FILE_NAME),
+            'label' => $this->module->l('Select when to create the Order invoice', self::FILE_NAME),
             'desc' => $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
             'tab' => $advancedSettings,
-            'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
+            'name' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS,
             'options' => [
                 'query' => [
                     [
-                        'id' => Config::MOLLIE_STATUS_DEFAULT,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT,
                         'name' => $this->module->l('Default', self::FILE_NAME),
                     ],
                     [
-                        'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
                         'name' => $this->module->l('Authorised', self::FILE_NAME),
                     ],
                     [
-                        'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
                         'name' => $this->module->l('Shipped', self::FILE_NAME),
                     ],
                 ],
@@ -527,7 +511,7 @@ class FormBuilder
         $descriptionStatus = $this->module->l('`%s` payments get `%s` status', self::FILE_NAME);
         $messageMail = $this->module->l('Send email when %s', self::FILE_NAME);
         $descriptionMail = $this->module->l('Send email when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
-        $allStatuses = OrderState::getOrderStates($this->lang->id);
+        $allStatuses = OrderState::getOrderStates($this->context->getLanguageId());
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
         $statusOptions = [
@@ -556,7 +540,7 @@ class FormBuilder
             $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
-                $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
+                $statusName = $orderStatus->getFieldByLang('name', $this->context->getLanguageId());
                 $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
@@ -678,7 +662,7 @@ class FormBuilder
             'name' => Config::MOLLIE_TRACKING_URLS,
             'depends' => Config::MOLLIE_API,
             'depends_value' => Config::MOLLIE_ORDERS_API,
-            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->id),
+            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->context->getLanguageId()),
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
@@ -729,7 +713,7 @@ class FormBuilder
                 'id_order_state' => '0',
             ],
         ];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->context->getLanguageId()));
         $orderStatusesCount = count($orderStatuses);
         for ($i = 0; $i < $orderStatusesCount; ++$i) {
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
@@ -737,8 +721,8 @@ class FormBuilder
 
         AssortUtility::aasort($orderStatuses, 'id_order_state');
 
-        $this->smarty->assign([
-            'logs' => $this->link->getAdminLink('AdminLogs'),
+        $this->context->getSmarty()->assign([
+            'logs' => $this->context->getAdminLink('AdminLogs'),
         ]);
         $input = array_merge(
             $input,

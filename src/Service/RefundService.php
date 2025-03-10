@@ -17,10 +17,15 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class RefundService
 {
@@ -31,15 +36,9 @@ class RefundService
      */
     private $module;
 
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
-
-    public function __construct(Mollie $module, TransactionService $transactionService)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
-        $this->transactionService = $transactionService;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

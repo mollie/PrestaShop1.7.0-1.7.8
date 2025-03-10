@@ -15,11 +15,14 @@ namespace Mollie\Handler\CartRule;
 use Cart;
 use CartRule;
 use Mollie\Repository\CartRuleRepositoryInterface;
-use Mollie\Repository\OrderCartRuleRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use MolPendingOrderCartRule;
 use Order;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInterface
 {
@@ -27,11 +30,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
      * @var PendingOrderCartRuleRepositoryInterface
      */
     private $pendingOrderCartRuleRepository;
-
-    /**
-     * @var OrderCartRuleRepositoryInterface
-     */
-    private $orderCartRuleRepository;
 
     /**
      * @var CartRuleRepositoryInterface
@@ -45,12 +43,10 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
 
     public function __construct(
         PendingOrderCartRuleRepositoryInterface $pendingOrderCartRuleRepository,
-        OrderCartRuleRepositoryInterface $orderCartRuleRepository,
         CartRuleRepositoryInterface $cartRuleRepository,
         OrderRepositoryInterface $orderRepository
     ) {
         $this->pendingOrderCartRuleRepository = $pendingOrderCartRuleRepository;
-        $this->orderCartRuleRepository = $orderCartRuleRepository;
         $this->cartRuleRepository = $cartRuleRepository;
         $this->orderRepository = $orderRepository;
     }

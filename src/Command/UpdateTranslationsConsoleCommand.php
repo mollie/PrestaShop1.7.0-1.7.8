@@ -12,22 +12,19 @@
 
 namespace Mollie\Command;
 
-use Mollie;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class UpdateTranslationsConsoleCommand extends Command
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
-
-    public function __construct(Mollie $module)
+    public function __construct()
     {
         parent::__construct();
-        $this->module = $module;
     }
 
     protected function configure()

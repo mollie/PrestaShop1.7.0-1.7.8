@@ -15,6 +15,10 @@ namespace Mollie\Validator;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderConfMailValidator implements MailValidatorInterface
 {
     /**
@@ -59,7 +63,7 @@ class OrderConfMailValidator implements MailValidatorInterface
             return true;
         }
 
-        if ((int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED) === $orderStateId) {
+        if ((int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED) === $orderStateId) {
             return true;
         }
 

@@ -22,10 +22,10 @@ use mysqli_result;
 use PDOStatement;
 use PrestaShopDatabaseException;
 
-/**
- * @deprecated - outside code must always use interface. Use PaymentMethodRepositoryInterface instead.
- * In Containers use PaymentMethodRepositoryInterface::class
- */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentMethodRepository extends AbstractRepository implements PaymentMethodRepositoryInterface
 {
     public function __construct()
@@ -88,7 +88,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         }
 
         $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
-        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '" 
+        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '"
         AND id_shop = ' . (int) $shopId;
 
         return Db::getInstance()->getValue($sql);

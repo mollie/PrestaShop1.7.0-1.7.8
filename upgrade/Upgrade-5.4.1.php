@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -20,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_5_4_1(Mollie $module): bool
 {
     /** @var ConfigurationAdapter $configuration */
-    $configuration = $module->getMollieContainer(ConfigurationAdapter::class);
+    $configuration = $module->getService(ConfigurationAdapter::class);
 
     $configuration->updateValue(Config::MOLLIE_IFRAME['production'], Configuration::get('MOLLIE_IFRAME'));
     $configuration->updateValue(Config::MOLLIE_IFRAME['sandbox'], Configuration::get('MOLLIE_IFRAME'));
