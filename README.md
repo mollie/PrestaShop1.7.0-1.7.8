@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://info.mollie.com/hubfs/github/prestashop/logo.png" width="128" height="128"/>
+  <img src="https://framerusercontent.com/images/nZbkYqzNfjeTaOidYm2CXg3vvDA.png" height="128"/>
 </p>
 <h1 align="center">Mollie for Prestashop</h1>
 
